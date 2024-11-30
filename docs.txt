@@ -79,20 +79,50 @@ ALTER TABLE "Payment" ADD CONSTRAINT "PaymentStatus" CHECK (STATUS IN ('Pending'
 
 Property///
 Column Names: "['PROPERTY_ID', 'ADDRESS', 'CITY', 'STATE', 'POSTAL_CODE', 'SIZE', 'BEDROOMS', 'BATHROOMS', 'PRICE', 'STATUS', 'TYPE', 'DESCRIPTION']"
-CREATE TABLE "Property" (
-    "PROPERTY_ID" INTEGER PRIMARY KEY,
-    "ADDRESS" VARCHAR(255) NOT NULL,
-    "CITY" VARCHAR(255) NOT NULL,
-    "STATE" VARCHAR(255) NOT NULL,
-    "POSTAL_CODE" VARCHAR(255) NOT NULL,
-    "SIZE" INTEGER NOT NULL,
-    "BEDROOMS" INTEGER NOT NULL,
-    "BATHROOMS" INTEGER NOT NULL,
-    "PRICE" INTEGER NOT NULL,
-    "STATUS" VARCHAR(255) NOT NULL CHECK (STATUS IN ('AVAILABLE', 'PENDING', 'SOLD')),
-    "TYPE" VARCHAR(255) NOT NULL,
-    "DESCRIPTION" VARCHAR(255) NOT NULL
-)
+    CREATE TABLE "Property" (
+        "PROPERTY_ID" INTEGER PRIMARY KEY,
+        "ADDRESS" VARCHAR(255) NOT NULL,
+        "CITY" VARCHAR(255) NOT NULL,
+        "STATE" VARCHAR(255) NOT NULL,
+        "POSTAL_CODE" VARCHAR(255) NOT NULL,
+        "SIZE" INTEGER NOT NULL,
+        "BEDROOMS" INTEGER NOT NULL,
+        "BATHROOMS" INTEGER NOT NULL,
+        "PRICE" INTEGER NOT NULL,
+        "STATUS" VARCHAR(255) NOT NULL CHECK (STATUS IN ('AVAILABLE', 'PENDING', 'SOLD')),
+        "TYPE" VARCHAR(255) NOT NULL,
+        "DESCRIPTION" VARCHAR(255) NOT NULL
+    )
+    CREATE GENERATOR GEN_PROPERTY_ID;
+    SET GENERATOR GEN_PROPERTY_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_PROPERTY_ID FOR \"Property\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    BEGIN
+        IF (NEW.PROPERTY_ID IS NULL) THEN
+            NEW.PROPERTY_ID = GEN_ID(GEN_PROPERTY_ID, 1);
+    END;
+    CREATE OR ALTER TRIGGER BI_PROPERTY_ID FOR \"Property\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(BI_PROPERTY_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"Property\" WHERE ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(BI_PROPERTY_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.ID = GENERATED_ID;
+        END
+    END;
 
 Rents///
 Column Names: ['RENT_ID', 'START_DATE', 'END_DATE', 'DEPOSIT', 'STATUS', 'CLIENT_ID', 'PROPERTY_ID']
@@ -111,15 +141,38 @@ ALTER TABLE "Rents" ADD CONSTRAINT "RentStatus" CHECK (STATUS IN ('Pending', 'En
 
 Repairs///
 Column Names: ['REPAIR_ID', 'REPAIR_DATE', 'STATUS', 'DESCRIPTION', 'PROPERTY_ID']
-CREATE TABLE "Repairs" (
-    REPAIR_ID INTEGER PRIMARY KEY,
-    REPAIR_DATE DATE NOT NULL,
-    STATUS VARCHAR(20) NOT NULL,
-    DESCRIPTION VARCHAR(100) NOT NULL,
-    PROPERTY_ID INTEGER NOT NULL,
-    FOREIGN KEY (PROPERTY_ID) REFERENCES "Property" (PROPERTY_ID)             
-)
-ALTER TABLE "Repairs" ADD CONSTRAINT RepairStatus" CHECK (STATUS IN ('Pending', 'In Progress', 'Completed','Rescheduled'));
+    CREATE TABLE "Repairs" (
+        REPAIR_ID INTEGER PRIMARY KEY,
+        REPAIR_DATE DATE NOT NULL,
+        STATUS VARCHAR(20) NOT NULL,
+        DESCRIPTION VARCHAR(100) NOT NULL,
+        PROPERTY_ID INTEGER NOT NULL,
+        FOREIGN KEY (PROPERTY_ID) REFERENCES "Property" (PROPERTY_ID)             
+    )
+    ALTER TABLE "Repairs" ADD CONSTRAINT RepairStatus" CHECK (STATUS IN ('Pending', 'In Progress', 'Completed','Rescheduled'));
+    CREATE GENERATOR GEN_REPAIRS_ID;
+    SET GENERATOR GEN_REPAIRS_ID TO {max_id}
+    CREATE OR ALTER TRIGGER BI_REPAIR_ID FOR \"Repairs\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.REPAIR_ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(GEN_REPAIRS_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"Repairs\" WHERE REPAIR_ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(GEN_REPAIRS_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.REPAIR_ID = GENERATED_ID;
+        END
+    END;
 
 Review///
 Column Names: ['REVIEW_ID', 'RATING', 'DESCRIPTION', 'CLIENT_ID', 'AGENT_ID']

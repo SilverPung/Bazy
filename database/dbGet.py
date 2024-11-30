@@ -1,23 +1,9 @@
 from fastapi import Depends, HTTPException
+from database.connection import DatabaseConnection
 import fdb
-
-
-
-
-
-
-
-
-
-
-class GetAll:
-    def __init__(self):
-        """Connect to the database using the Firebird driver for Python (fdb) and and output the all data from the tables in the database.
-        """
-        self.db = fdb.connect("localhost:C:/Program Files/Firebird/agency.fdb", user='SYSDBA', password='postgres')
-    
+class GetAll(DatabaseConnection): 
     def get_property(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Property"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -35,7 +21,7 @@ class GetAll:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query)
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -46,7 +32,7 @@ class GetAll:
         return result
     
     def get_repairs(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Repairs"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -57,7 +43,7 @@ class GetAll:
         return result
     
     def get_meeting(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Meeting"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -68,7 +54,7 @@ class GetAll:
         return result
     
     def get_sells(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Sales"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -79,7 +65,7 @@ class GetAll:
         return result
     
     def get_rent(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Rents"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -90,7 +76,7 @@ class GetAll:
         return result
     
     def get_payment(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Payment"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -101,7 +87,7 @@ class GetAll:
         return result
     
     def get_agreements(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Agreement"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -112,7 +98,7 @@ class GetAll:
         return result
     
     def get_reviews(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Review"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -123,7 +109,7 @@ class GetAll:
         return result
 
     def get_tel_number(self):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Tel_number"')
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -141,7 +127,7 @@ class GetAll:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query)
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -159,7 +145,7 @@ class GetAll:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query)
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -177,7 +163,7 @@ class GetAll:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query)
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -195,7 +181,7 @@ class GetOne:
         self.db = fdb.connect("localhost:C:/Program Files/Firebird/agency.fdb", user='SYSDBA',password='postgres')
 
     def get_property(self, property_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Property" WHERE PROPERTY_ID = ?', (property_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -213,7 +199,7 @@ class GetOne:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query, (user_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -223,7 +209,7 @@ class GetOne:
         return result
     
     def get_repair(self, repair_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Repairs" WHERE REPAIR_ID = ?', (repair_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -233,7 +219,7 @@ class GetOne:
         return result
    
     def get_meeting(self, meeting_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Meeting" WHERE MEETING_ID = ?', (meeting_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -243,7 +229,7 @@ class GetOne:
         return result
     
     def get_sell(self, sell_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Sales" WHERE SELL_ID = ?', (sell_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -253,7 +239,7 @@ class GetOne:
         return result
     
     def get_rent(self, rent_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Rents" WHERE RENT_ID = ?', (rent_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -263,7 +249,7 @@ class GetOne:
         return result
     
     def get_payment(self, payment_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Payment" WHERE PAYMENT_ID = ?', (payment_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -273,7 +259,7 @@ class GetOne:
         return result
     
     def get_agreement(self, agreement_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Agreement" WHERE AGREEMENT_ID = ?', (agreement_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -283,7 +269,7 @@ class GetOne:
         return result
     
     def get_review(self, review_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Review" WHERE REVIEW_ID = ?', (review_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -293,7 +279,7 @@ class GetOne:
         return result
     
     def get_tel_number(self, tel_number_id: int):
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Tel_number" WHERE USER_ID=?', (tel_number_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -311,7 +297,7 @@ class GetOne:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query, (agent_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -329,7 +315,7 @@ class GetOne:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query, (client_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -347,7 +333,7 @@ class GetOne:
             ORDER BY u.USER_ID
             
             """
-        cursor = self.db.cursor()
+        cursor = self.get_cursor()
         cursor.execute(sql_query, (manager_id,))
         colums = [desc[0] for desc in cursor.description]
         rows = cursor.fetchall()
@@ -357,4 +343,5 @@ class GetOne:
         return result
 
 if __name__ == "__main__":
-    pass
+    get = GetAll()
+    print(get.get_property())
