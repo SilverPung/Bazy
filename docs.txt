@@ -10,14 +10,38 @@ CREATE TABLE "Agent" (
 
 Agreement///
 Column Names: ['AGREEMENT_ID', 'TITLE', 'DESCRIPTION', 'AGREEMENT_DATE', 'USER_ID']
-CREATE TABLE "Agreement" (
-    AGREEMENT_ID INTEGER NOT NULL PRIMARY KEY,
-    TITLE VARCHAR(255) NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    AGREEMENT_DATE DATE NOT NULL,
-    USER_ID INTEGER NOT NULL,
-    FOREIGN KEY (USER_ID) REFERENCES "User" (USER_ID)
-)
+    CREATE TABLE "Agreement" (
+        AGREEMENT_ID INTEGER NOT NULL PRIMARY KEY,
+        TITLE VARCHAR(255) NOT NULL,
+        DESCRIPTION VARCHAR(255),
+        AGREEMENT_DATE DATE NOT NULL,
+        USER_ID INTEGER NOT NULL,
+        FOREIGN KEY (USER_ID) REFERENCES "User" (USER_ID)
+    )
+    CREATE GENERATOR GEN_AGREEMENT_ID;
+    SET GENERATOR GEN_AGREEMENT_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_AGREEMENT_ID FOR \"Agreement\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.AGREEMENT_ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(GEN_AGREEMENT_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"Agreement\" WHERE AGREEMENT_ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(GEN_AGREEMENT_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.AGREEMENT_ID = GENERATED_ID;
+        END
+    END;
+
 
 Client///
 Column Names: ['USER_ID', 'BUDGET', 'PREFFERED_LOCATION']
@@ -49,32 +73,79 @@ CREATE TABLE "ManagerAgent" (
 
 Meeting///
 Column Names: ['MEETING_ID', 'DATE_MEETING', 'TIME_MEETING', 'STATUS', 'PROPERTY_ID', 'CLIENT_ID', 'AGENT_ID']
-CREATE TABLE "Meeting" (
-    MEETING_ID INTEGER PRIMARY KEY,
-    DATE_MEETING DATE NOT NULL,
-    TIME_MEETING TIME NOT NULL,
-    STATUS VARCHAR(255) NOT NULL,
-    PROPERTY_ID INTEGER NOT NULL,
-    CLIENT_ID INTEGER NOT NULL,
-    AGENT_ID INTEGER NOT NULL,
-    FOREIGN KEY (PROPERTY_ID) REFERENCES "Property" (PROPERTY_ID),
-    FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
-    FOREIGN KEY (AGENT_ID) REFERENCES "Agent"(USER_ID)
-)
-ALTER TABLE "Meeting" ADD CONSTRAINT "MeetingStatus" CHECK (STATUS IN ('Scheduled', 'ReScheduled', 'Completed', 'Cancelled'));
+    CREATE TABLE "Meeting" (
+        MEETING_ID INTEGER PRIMARY KEY,
+        DATE_MEETING DATE NOT NULL,
+        TIME_MEETING TIME NOT NULL,
+        STATUS VARCHAR(255) NOT NULL,
+        PROPERTY_ID INTEGER NOT NULL,
+        CLIENT_ID INTEGER NOT NULL,
+        AGENT_ID INTEGER NOT NULL,
+        FOREIGN KEY (PROPERTY_ID) REFERENCES "Property" (PROPERTY_ID),
+        FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
+        FOREIGN KEY (AGENT_ID) REFERENCES "Agent"(USER_ID)
+    )
+    ALTER TABLE "Meeting" ADD CONSTRAINT "MeetingStatus" CHECK (STATUS IN ('Scheduled', 'ReScheduled', 'Completed', 'Cancelled'));
+    CREATE GENERATOR GEN_MEETING_ID;
+    SET GENERATOR GEN_MEETING_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_MEETING_ID FOR \"Meeting\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.MEETING_ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(GEN_MEETING_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"Meeting\" WHERE MEETING_ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(GEN_MEETING_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.MEETING_ID = GENERATED_ID;
+        END
+    END;
+
 
 Payment
 Column Names: ['PAYMENT_ID', 'AMOUNT', 'PAYMENT_DATE', 'STATUS', 'METHOD', 'RENT_ID']
-CREATE TABLE "Payment" (
-    PAYMENT_ID INTEGER PRIMARY KEY,
-    AMOUNT DECIMAL(10, 2) NOT NULL,
-    PAYMENT_DATE DATE NOT NULL,
-    STATUS VARCHAR(20) NOT NULL,
-    METHOD VARCHAR(20) NOT NULL,
-    RENT_ID INTEGER NOT NULL,
-    FOREIGN KEY (RENT_ID) REFERENCES "Rents"(RENT_ID)
-)
-ALTER TABLE "Payment" ADD CONSTRAINT "PaymentStatus" CHECK (STATUS IN ('Pending', 'Paid', 'Failed'));
+    CREATE TABLE "Payment" (
+        PAYMENT_ID INTEGER PRIMARY KEY,
+        AMOUNT DECIMAL(10, 2) NOT NULL,
+        PAYMENT_DATE DATE NOT NULL,
+        STATUS VARCHAR(20) NOT NULL,
+        METHOD VARCHAR(20) NOT NULL,
+        RENT_ID INTEGER NOT NULL,
+        FOREIGN KEY (RENT_ID) REFERENCES "Rents"(RENT_ID)
+    )
+    ALTER TABLE "Payment" ADD CONSTRAINT "PaymentStatus" CHECK (STATUS IN ('Pending', 'Paid', 'Failed'));
+    CREATE GENERATOR GEN_PAYMENT_ID;
+    SET GENERATOR GEN_PAYMENT_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_PAYMENT_ID FOR \"Payment\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.PAYMENT_ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(GEN_PAYMENT_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"Payment\" WHERE PAYMENT_ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(GEN_PAYMENT_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.PAYMENT_ID = GENERATED_ID;
+        END
+    END;
 
 
 Property///
@@ -126,18 +197,42 @@ Column Names: "['PROPERTY_ID', 'ADDRESS', 'CITY', 'STATE', 'POSTAL_CODE', 'SIZE'
 
 Rents///
 Column Names: ['RENT_ID', 'START_DATE', 'END_DATE', 'DEPOSIT', 'STATUS', 'CLIENT_ID', 'PROPERTY_ID']
-CREATE TABLE "Rents" (
-    RENT_ID INTEGER PRIMARY KEY,
-    START_DATE DATE NOT NULL,
-    END_DATE DATE NOT NULL,
-    DEPOSIT DECIMAL(10, 2) NOT NULL,
-    STATUS VARCHAR(10) NOT NULL,
-    CLIENT_ID INTEGER NOT NULL,
-    PROPERTY_ID INTEGER NOT NULL,
-    FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
-    FOREIGN KEY (PROPERTY_ID) REFERENCES "Property"(PROPERTY_ID)
-)
-ALTER TABLE "Rents" ADD CONSTRAINT "RentStatus" CHECK (STATUS IN ('Pending', 'Ended', 'Active'));
+    CREATE TABLE "Rents" (
+        RENT_ID INTEGER PRIMARY KEY,
+        START_DATE DATE NOT NULL,
+        END_DATE DATE NOT NULL,
+        DEPOSIT DECIMAL(10, 2) NOT NULL,
+        STATUS VARCHAR(10) NOT NULL,
+        CLIENT_ID INTEGER NOT NULL,
+        PROPERTY_ID INTEGER NOT NULL,
+        FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
+        FOREIGN KEY (PROPERTY_ID) REFERENCES "Property"(PROPERTY_ID)
+    )
+    ALTER TABLE "Rents" ADD CONSTRAINT "RentStatus" CHECK (STATUS IN ('Pending', 'Ended', 'Active'));
+    CREATE GENERATOR GEN_RENT_ID;
+    SET GENERATOR GEN_RENT_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_RENT_ID FOR \"Rents\"
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+        DECLARE VARIABLE GENERATED_ID INTEGER;
+        BEGIN
+            IF (NEW.RENT_ID IS NULL) THEN
+            BEGIN
+                -- Generate the first ID
+                GENERATED_ID = GEN_ID(GEN_RENT_ID, 1);
+
+                -- Check for conflicts and increment until unique
+                WHILE (EXISTS (SELECT 1 FROM \"Rents\" WHERE RENT_ID = :GENERATED_ID)) DO
+                BEGIN
+                    -- Increment the generator again
+                    GENERATED_ID = GEN_ID(GEN_RENT_ID, 1);
+                END
+
+                -- Assign the unique ID to the new row
+                NEW.RENT_ID = GENERATED_ID;
+            END
+        END;
+
 
 Repairs///
 Column Names: ['REPAIR_ID', 'REPAIR_DATE', 'STATUS', 'DESCRIPTION', 'PROPERTY_ID']
@@ -176,32 +271,79 @@ Column Names: ['REPAIR_ID', 'REPAIR_DATE', 'STATUS', 'DESCRIPTION', 'PROPERTY_ID
 
 Review///
 Column Names: ['REVIEW_ID', 'RATING', 'DESCRIPTION', 'CLIENT_ID', 'AGENT_ID']
-CREATE TABLE "Review" (
-    REVIEW_ID INTEGER PRIMARY KEY,
-    RATING INTEGER NOT NULL,
-    DESCRIPTION VARCHAR(255),
-    CLIENT_ID INTEGER NOT NULL,
-    AGENT_ID INTEGER NOT NULL,
-    FOREIGN KEY (CLIENT_ID) REFERENCES "Client" (USER_ID),
-    FOREIGN KEY (AGENT_ID) REFERENCES "Agent" (USER_ID)
-)
+    CREATE TABLE "Review" (
+        REVIEW_ID INTEGER PRIMARY KEY,
+        RATING INTEGER NOT NULL,
+        DESCRIPTION VARCHAR(255),
+        CLIENT_ID INTEGER NOT NULL,
+        AGENT_ID INTEGER NOT NULL,
+        FOREIGN KEY (CLIENT_ID) REFERENCES "Client" (USER_ID),
+        FOREIGN KEY (AGENT_ID) REFERENCES "Agent" (USER_ID)
+    )
+    CREATE GENERATOR GEN_REVIEW_ID;
+    SET GENERATOR GEN_REVIEW_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_REVIEW_ID FOR \"Review\"
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+        DECLARE VARIABLE GENERATED_ID INTEGER;
+        BEGIN
+            IF (NEW.REVIEW_ID IS NULL) THEN
+            BEGIN
+                -- Generate the first ID
+                GENERATED_ID = GEN_ID(GEN_REVIEW_ID, 1);
+
+                -- Check for conflicts and increment until unique
+                WHILE (EXISTS (SELECT 1 FROM \"Review\" WHERE REVIEW_ID = :GENERATED_ID)) DO
+                BEGIN
+                    -- Increment the generator again
+                    GENERATED_ID = GEN_ID(GEN_REVIEW_ID, 1);
+                END
+
+                -- Assign the unique ID to the new row
+                NEW.REVIEW_ID = GENERATED_ID;
+            END
+        END;
+
 
 Sales///
 Column Names: ['SALE_ID', 'PRICE', 'STATUS', 'SALE_DATE', 'PROPERTY_ID', 'CLIENT_ID', 'AGENT_ID']
-CREATE TABLE "Sales" (
-    SALE_ID INTEGER PRIMARY KEY,
-    PRICE DECIMAL(10, 2) NOT NULL,
-    STATUS VARCHAR(255) NOT NULL,
-    SALE_DATE DATE NOT NULL,
-    PROPERTY_ID INTEGER ,
-    CLIENT_ID INTEGER NOT NULL,
-    AGENT_ID INTEGER NOT NULL,
+    CREATE TABLE "Sales" (
+        SALE_ID INTEGER PRIMARY KEY,
+        PRICE DECIMAL(10, 2) NOT NULL,
+        STATUS VARCHAR(255) NOT NULL,
+        SALE_DATE DATE NOT NULL,
+        PROPERTY_ID INTEGER ,
+        CLIENT_ID INTEGER NOT NULL,
+        AGENT_ID INTEGER NOT NULL,
 
-    FOREIGN KEY (PROPERTY_ID) REFERENCES "Property"(PROPERTY_ID),
-    FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
-    FOREIGN KEY (AGENT_ID) REFERENCES "Agent"(USER_ID)
-)
-ALTER TABLE "Sales" ADD CONSTRAINT "SaleStatus" CHECK (STATUS IN ('Pending', 'Completed', 'Cancelled'))
+        FOREIGN KEY (PROPERTY_ID) REFERENCES "Property"(PROPERTY_ID),
+        FOREIGN KEY (CLIENT_ID) REFERENCES "Client"(USER_ID),
+        FOREIGN KEY (AGENT_ID) REFERENCES "Agent"(USER_ID)
+    )
+    ALTER TABLE "Sales" ADD CONSTRAINT "SaleStatus" CHECK (STATUS IN ('Pending', 'Completed', 'Cancelled'))
+    CREATE GENERATOR GEN_SALES_ID;
+    SET GENERATOR GEN_SALES_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_SALES_ID FOR \"Sales\"
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+        DECLARE VARIABLE GENERATED_ID INTEGER;
+        BEGIN
+            IF (NEW.SALE_ID IS NULL) THEN
+            BEGIN
+                -- Generate the first ID
+                GENERATED_ID = GEN_ID(GEN_SALES_ID, 1);
+
+                -- Check for conflicts and increment until unique
+                WHILE (EXISTS (SELECT 1 FROM \"Sales\" WHERE SALE_ID = :GENERATED_ID)) DO
+                BEGIN
+                    -- Increment the generator again
+                    GENERATED_ID = GEN_ID(GEN_SALES_ID, 1);
+                END
+
+                -- Assign the unique ID to the new row
+                NEW.SALE_ID = GENERATED_ID;
+            END
+        END;
 
 
 Tel_number///
@@ -215,11 +357,35 @@ CREATE TABLE "Tel_number" (
 
 User///
 Column Names: ['USER_ID', 'NAME', 'SURNAME', 'EMAIL', 'PASSWORD', 'ADDRESS']
-CREATE TABLE "User" (
-    USER_ID INTEGER PRIMARY KEY,
-    NAME VARCHAR(50) NOT NULL,
-    SURNAME VARCHAR(50) NOT NULL,
-    EMAIL VARCHAR(50) NOT NULL,
-    PASSWORD VARCHAR(50) NOT NULL,
-    ADDRESS VARCHAR(100) NOT NULL
-)
+    CREATE TABLE "User" (
+        USER_ID INTEGER PRIMARY KEY,
+        NAME VARCHAR(50) NOT NULL,
+        SURNAME VARCHAR(50) NOT NULL,
+        EMAIL VARCHAR(50) NOT NULL,
+        PASSWORD VARCHAR(50) NOT NULL,
+        ADDRESS VARCHAR(100) NOT NULL
+    )
+    CREATE GENERATOR GEN_USER_ID;
+    SET GENERATOR GEN_USER_ID TO {max_id};
+    CREATE OR ALTER TRIGGER BI_USER_ID FOR \"User\"
+    ACTIVE BEFORE INSERT POSITION 0
+    AS
+    DECLARE VARIABLE GENERATED_ID INTEGER;
+    BEGIN
+        IF (NEW.USER_ID IS NULL) THEN
+        BEGIN
+            -- Generate the first ID
+            GENERATED_ID = GEN_ID(GEN_USER_ID, 1);
+
+            -- Check for conflicts and increment until unique
+            WHILE (EXISTS (SELECT 1 FROM \"User\" WHERE USER_ID = :GENERATED_ID)) DO
+            BEGIN
+                -- Increment the generator again
+                GENERATED_ID = GEN_ID(GEN_USER_ID, 1);
+            END
+
+            -- Assign the unique ID to the new row
+            NEW.USER_ID = GENERATED_ID;
+        END
+    END;
+

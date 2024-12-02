@@ -7,55 +7,55 @@ GetAll = GetAll()
 GetOne = GetOne()
 
 
-@router.get("/agency/properties")
+@router.get("/agency/property")
 def get_property():
     return GetAll.get_property()
 
-@router.get("/agency/users")
+@router.get("/agency/user")
 def get_user():
     return GetAll.get_user()
 
-@router.get("/agency/repairs")
+@router.get("/agency/repair")
 def get_repairs():
     return GetAll.get_repairs()
 
-@router.get("/agency/meetings")
+@router.get("/agency/meeting")
 def get_meeting():
     return GetAll.get_meeting()
 
-@router.get("/agency/sells")
-def get_sells():
-    return GetAll.get_sells()
+@router.get("/agency/sale")
+def get_sales():
+    return GetAll.get_sales()
 
-@router.get("/agency/rents")
+@router.get("/agency/rent")
 def get_rent():
     return GetAll.get_rent()
 
-@router.get("/agency/payments")
+@router.get("/agency/payment")
 def get_payment():
     return GetAll.get_payment()
 
-@router.get("/agency/tel_numbesr")
+@router.get("/agency/tel_number")
 def get_tel_number():
     return GetAll.get_tel_number()
 
-@router.get("/agency/reviews")
+@router.get("/agency/review")
 def get_reviews():
     return GetAll.get_reviews()
 
-@router.get("/agency/agreements")
+@router.get("/agency/agreement")
 def get_agreements():
     return GetAll.get_agreements()
 
-@router.get("/agency/agents")
+@router.get("/agency/agent")
 def get_agent():
     return GetAll.get_agent()
 
-@router.get("/agency/clients")
+@router.get("/agency/client")
 def get_client():
     return GetAll.get_client()
 
-@router.get("/agency/managers")
+@router.get("/agency/manager")
 def get_manager():
     return GetAll.get_manager()
 
@@ -76,9 +76,9 @@ def get_repair_by_id(repair_id: int):
 def get_meeting_by_id(meeting_id: int):
     return GetOne.get_meeting(meeting_id)
     
-@router.get("/agency/sell/{sell_id}")
-def get_sell_by_id(sell_id: int):
-    return GetOne.get_sell(sell_id)
+@router.get("/agency/sale/{sale_id}")
+def get_sale_by_id(sale_id: int):
+    return GetOne.get_sell(sale_id)
 
 @router.get("/agency/rent/{rent_id}")
 def get_rent_by_id(rent_id: int):

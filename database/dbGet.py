@@ -53,7 +53,7 @@ class GetAll(DatabaseConnection):
         result =[dict(zip(colums, row)) for row in rows]
         return result
     
-    def get_sells(self):
+    def get_sales(self):
         cursor = self.get_cursor()
         cursor.execute('SELECT * FROM "Sales"')
         colums = [desc[0] for desc in cursor.description]
