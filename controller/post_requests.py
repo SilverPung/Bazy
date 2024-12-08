@@ -6,7 +6,7 @@ InsertOne = InsertOne()
 
 @router.post("/agency/property",description="Status can be 'AVAILABLE', 'PENDING', 'SOLD'")
 def insert_property(address: str, city: str, state: str, postal_code: str, size: int, bedrooms: int, bathrooms: int, price: float, status: str, type: str, description: str):
-    InsertOne.insert_property(address, city, state, postal_code, size, bedrooms, bathrooms, price, status, type, description)
+    InsertOne.insert_property(address, city.capitalize(), state, postal_code, size, bedrooms, bathrooms, price, status, type, description)
     return {"message": "Property inserted successfully"}
 
 @router.post("/agency/user")

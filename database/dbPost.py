@@ -117,6 +117,7 @@ class InsertOne(DatabaseConnection):
         ''', (name, surname, email, password, address))
         self.commit()
 
+    
 
 class InsertByProcedure(DatabaseConnection):
         

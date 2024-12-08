@@ -167,6 +167,16 @@ class GetAll(DatabaseConnection):
         result =[dict(zip(colums, row)) for row in rows]
         return result
     
+    def get_manager_agent(self):
+        cursor = self.get_cursor()
+        cursor.execute('SELECT * FROM "ManagerAgent"')
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        if not rows:
+            raise HTTPException(status_code=404, detail="No manager_agents found")
+        result =[dict(zip(colums, row)) for row in rows]
+        return result
 
 
 class GetOne(DatabaseConnection):
@@ -334,6 +344,7 @@ class GetOne(DatabaseConnection):
 
 
 
+
 class GetAdvanced(DatabaseConnection):
     def __init__(self):
         super().__init__()
@@ -460,6 +471,7 @@ class GetAdvanced(DatabaseConnection):
     
     def get_property_by_city(self, city):
         cursor = self.get_cursor()
+        city= city.capitalize()
         cursor.execute("""
             SELECT * FROM "Property" WHERE CITY = ?
             ORDER BY PRICE ASC;
@@ -471,12 +483,178 @@ class GetAdvanced(DatabaseConnection):
         result = [dict(zip(colums, row)) for row in rows]
         return result
     
+    def get_user_from_city(self, city):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT U.USER_ID, U.NAME, U.SURNAME, U.EMAIL, U.PASSWORD, U.ADDRESS
+            FROM "User" U
+            WHERE U.ADDRESS LIKE ?
+        """, (f'%{city}%',))
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No users found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
     
+    def get_property_in_cities(self, cities: list):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT * FROM "Property" WHERE CITY IN ({})
+            ORDER BY PRICE ASC;
+        """.format(', '.join(['?']*len(cities))), cities)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_property_not_in_cities(self, cities: list):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT * FROM "Property" WHERE CITY NOT IN ({})
+            ORDER BY PRICE ASC;
+        """.format(', '.join(['?']*len(cities))), cities)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
 
-if __name__ == "__main__":
-    get = GetAdvanced()
-    users = get.get_lone_user()
-    for user in users:
-        print(user)
+    def get_user_with_phone_numbers(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                U.USER_ID, 
+                U.NAME, 
+                U.SURNAME, 
+                U.EMAIL, 
+                U.PASSWORD, 
+                U.ADDRESS, 
+                LIST(T.TEL_NUMBER, ', ') AS TEL_NUMBERS
+            FROM "User" U
+            LEFT JOIN "Tel_number" T ON U.USER_ID = T.USER_ID
+            GROUP BY U.USER_ID, U.NAME, U.SURNAME, U.EMAIL, U.PASSWORD, U.ADDRESS
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No users found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_unique_cities_for_property(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT DISTINCT CITY FROM "Property"
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No cities found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+
+    def get_agent_with_supervisor(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                A.USER_ID AS AGENT_ID,
+                AU.NAME AS AGENT_NAME,
+                AU.SURNAME AS AGENT_SURNAME,
+                AU.EMAIL AS AGENT_EMAIL,
+                A.LICENSE_NUMBER,
+                A.COMMISION_RATE,
+                A.EMPLOYEMENT_DATE,
+                M.USER_ID AS SUPERVISOR_ID,
+                MU.NAME AS SUPERVISOR_NAME,
+                MU.SURNAME AS SUPERVISOR_SURNAME,
+                MU.EMAIL AS SUPERVISOR_EMAIL,
+                M.SUPERVISION_AREA,
+                M.EMPLOYMENT_DATE AS SUPERVISOR_EMPLOYMENT_DATE
+            FROM 
+                "Agent" A
+            JOIN 
+                "User" AU ON A.USER_ID = AU.USER_ID
+            RIGHT JOIN
+                "ManagerAgent" MA ON A.USER_ID = MA.AGENT_ID
+            LEFT JOIN
+                "Manager" M ON MA.MANAGER_ID = M.USER_ID
+            LEFT JOIN
+                "User" MU ON M.USER_ID = MU.USER_ID;
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No agents found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+
+    def get_property_not_sold_or_rented(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                P.PROPERTY_ID,
+                P.ADDRESS,
+                P.CITY,
+                P.STATE,
+                P.POSTAL_CODE,
+                P.SIZE,
+                P.BEDROOMS,
+                P.BATHROOMS,
+                P.PRICE,
+                P.STATUS,
+                P.TYPE,
+                P.DESCRIPTION
+            FROM 
+                "Property" P
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM "Sales" S
+                WHERE P.PROPERTY_ID = S.PROPERTY_ID
+                AND S.STATUS IN ('Pending', 'Completed')
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM "Rents" R
+                WHERE P.PROPERTY_ID = R.PROPERTY_ID
+                AND R.STATUS IN ('Pending', 'Active')
+            );
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_rents_with_money_paid_in_payment(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                R.RENT_ID,
+                R.PROPERTY_ID,
+                R.CLIENT_ID,
+                R.START_DATE,
+                R.END_DATE,
+                R.DEPOSIT,
+                R.STATUS,
+                CAST(SUM(CASE WHEN P.STATUS IN ('Pending', 'Paid') THEN P.AMOUNT ELSE 0 END) AS NUMERIC(10, 2)) AS TOTAL_PAID
+            FROM 
+                "Rents" R
+            JOIN
+                "Payment" P ON R.RENT_ID = P.RENT_ID
+            GROUP BY
+                R.RENT_ID, R.PROPERTY_ID, R.CLIENT_ID, R.START_DATE, R.END_DATE, R.DEPOSIT, R.STATUS
+            ORDER BY R.RENT_ID;
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No rents found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
 
 

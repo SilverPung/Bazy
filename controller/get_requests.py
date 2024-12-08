@@ -1,9 +1,11 @@
-from database.dbGet import GetAll, GetOne
-from fastapi import APIRouter
+from database.dbGet import GetAll, GetOne, GetAdvanced
+from fastapi import APIRouter, Query
+from typing import List
 
 router = APIRouter()
 GetAll = GetAll()
 GetOne = GetOne()
+GetAdvanced = GetAdvanced()
 
 @router.get("/agency/property", tags=["GetAll"])
 def get_property():
@@ -108,4 +110,68 @@ def get_client_by_id(client_id: int):
 @router.get("/agency/manager/{manager_id}", tags=["GetOne"])
 def get_manager_by_id(manager_id: int):
     return GetOne.get_manager(manager_id)
+
+@router.get("/agency/lone_user", tags=["GetAdvanced"])
+def get_lone_user():
+    return GetAdvanced.get_lone_user()
+
+@router.get("/agency/user_with_role", tags=["GetAdvanced"])
+def get_user_with_role():
+    return GetAdvanced.get_user_with_role()
+
+@router.get("/agency/property_with_repair_number", tags=["GetAdvanced"])
+def get_property_with_repair_number():
+    return GetAdvanced.get_property_with_repair_number()
+
+@router.get("/agency/renting_user", tags=["GetAdvanced"])
+def get_renting_user():
+    return GetAdvanced.get_renting_user()
+
+@router.get("/agency/property_cheaper_than_average", tags=["GetAdvanced"])
+def get_property_cheaper_than_average():
+    return GetAdvanced.get_property_cheaper_than_average()
+
+@router.get("/agency/property_by_type/{type}", tags=["GetAdvanced"])
+def get_property_by_type(type: str):
+    return GetAdvanced.get_property_by_type(type)
+
+@router.get("/agency/property_by_city/{city}", tags=["GetAdvanced"])
+def get_property_by_city(city: str):
+    return GetAdvanced.get_property_by_city(city)
+
+@router.get("/agency/user_from_city/{city}", tags=["GetAdvanced"])
+def get_user_from_city(city: str):
+    return GetAdvanced.get_user_from_city(city)
+
+@router.get("/agency/property_in_cities", tags=["GetAdvanced"])
+def get_property_in_cities(cities: List[str] = Query(...)):
+
+    return GetAdvanced.get_property_in_cities(cities)
+
+@router.get("/agency/property_not_in_cities", tags=["GetAdvanced"])
+def get_property_not_in_cities(cities: List[str] = Query(...)):
+
+    return GetAdvanced.get_property_not_in_cities(cities)
+
+@router.get("/agency/user_with_phone_numbers", tags=["GetAdvanced"])
+def get_user_with_phone_numbers():
+    return GetAdvanced.get_user_with_phone_numbers()
+
+@router.get("/agency/unique_cities_for_property", tags=["GetAdvanced"])
+def get_unique_cities_for_property():
+    return GetAdvanced.get_unique_cities_for_property()
+
+@router.get("/agency/agent_with_supervisor", tags=["GetAdvanced"])
+def get_agent_with_supervisor():
+    return GetAdvanced.get_agent_with_supervisor()
+
+@router.get("/agency/property_not_sold_or_rented", tags=["GetAdvanced"])
+def get_property_not_sold_or_rented():
+    return GetAdvanced.get_property_not_sold_or_rented()
+
+@router.get("/agency/rents_with_money_paid_in_payment", tags=["GetAdvanced"])
+def get_rents_with_money_paid_in_payment():
+    return GetAdvanced.get_rents_with_money_paid_in_payment()
+
+
 
