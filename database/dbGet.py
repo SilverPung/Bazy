@@ -15,10 +15,7 @@ class GetAll(DatabaseConnection):
 
     def get_user(self):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, t.TEL_NUMBER
-            FROM "User" u
-            JOIN "Tel_number" t ON u.USER_ID = t.USER_ID
-            ORDER BY u.USER_ID
+            SELECT * FROM "User"
             
             """
         cursor = self.get_cursor()
@@ -121,11 +118,10 @@ class GetAll(DatabaseConnection):
     
     def get_agent(self):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, a.LICENSE_NUMBER, a.COMMISION_RATE, a.EMPLOYEMENT_DATE
-            FROM "User" u
-            JOIN "Agent" a ON u.USER_ID = a.USER_ID
-            ORDER BY u.USER_ID
-            
+            SELECT * 
+            FROM \"Agent\" A LEFT JOIN \"User\"  U 
+            ON A.USER_ID=U.USER_ID; 
+    
             """
         cursor = self.get_cursor()
         cursor.execute(sql_query)
@@ -139,10 +135,9 @@ class GetAll(DatabaseConnection):
 
     def get_client(self):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, c.BUDGET, c.PREFFERED_LOCATION
-            FROM "User" u
-            JOIN "Client" c ON u.USER_ID = c.USER_ID
-            ORDER BY u.USER_ID
+            SELECT *
+            FROM \"Client\" C LEFT JOIN \"User\"  U
+            ON C.USER_ID=U.USER_ID; 
             
             """
         cursor = self.get_cursor()
@@ -157,10 +152,9 @@ class GetAll(DatabaseConnection):
     
     def get_manager(self):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, m.SUPERVISION_AREA, m.EMPLOYMENT_DATE
-            FROM "User" u
-            JOIN "Manager" m ON u.USER_ID = m.USER_ID
-            ORDER BY u.USER_ID
+            SELECT *
+            FROM \"Manager\" M LEFT JOIN \"User\"  U
+            ON M.USER_ID=U.USER_ID; 
             
             """
         cursor = self.get_cursor()
@@ -172,13 +166,14 @@ class GetAll(DatabaseConnection):
             raise HTTPException(status_code=404, detail="No users found")
         result =[dict(zip(colums, row)) for row in rows]
         return result
+    
 
-class GetOne:
+
+class GetOne(DatabaseConnection):
     
     def __init__(self):
-        """Connect to the database using the Firebird driver for Python (fdb) and and output the data from the tables in the database based on the id.
-        """
-        self.db = fdb.connect("localhost:C:/Program Files/Firebird/agency.fdb", user='SYSDBA',password='postgres')
+        super().__init__()
+       
 
     def get_property(self, property_id: int):
         cursor = self.get_cursor()
@@ -192,11 +187,7 @@ class GetOne:
     
     def get_user(self, user_id: int):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, t.TEL_NUMBER
-            FROM "User" u
-            JOIN "Tel_number" t ON u.USER_ID = t.USER_ID
-            WHERE u.USER_ID = ?
-            ORDER BY u.USER_ID
+            SELECT * FROM "User" WHERE USER_ID = ?;
             
             """
         cursor = self.get_cursor()
@@ -290,11 +281,10 @@ class GetOne:
     
     def get_agent(self, agent_id: int):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, a.LICENSE_NUMBER, a.COMMISION_RATE, a.EMPLOYEMENT_DATE
-            FROM "User" u
-            JOIN "Agent" a ON u.USER_ID = a.USER_ID
-            WHERE u.USER_ID = ?
-            ORDER BY u.USER_ID
+            SELECT *
+            FROM \"Agent\" A LEFT JOIN \"User\"  U
+            ON A.USER_ID=U.USER_ID
+            WHERE A.USER_ID = ?;
             
             """
         cursor = self.get_cursor()
@@ -308,11 +298,10 @@ class GetOne:
     
     def get_client(self, client_id: int):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, c.BUDGET, c.PREFFERED_LOCATION
-            FROM "User" u
-            JOIN "Client" c ON u.USER_ID = c.USER_ID
-            WHERE u.USER_ID = ?
-            ORDER BY u.USER_ID
+            SELECT *
+            FROM \"Client\" C LEFT JOIN \"User\"  U
+            ON C.USER_ID=U.USER_ID
+            WHERE C.USER_ID = ?;
             
             """
         cursor = self.get_cursor()
@@ -326,11 +315,10 @@ class GetOne:
     
     def get_manager(self, manager_id: int):
         sql_query = """
-            SELECT u.USER_ID, u.NAME, u.SURNAME, u.EMAIL, m.SUPERVISION_AREA, m.EMPLOYMENT_DATE
-            FROM "User" u
-            JOIN "Manager" m ON u.USER_ID = m.USER_ID
-            WHERE u.USER_ID = ?
-            ORDER BY u.USER_ID
+            SELECT *
+            FROM \"Manager\" M LEFT JOIN \"User\"  U
+            ON M.USER_ID=U.USER_ID
+            WHERE M.USER_ID = ?;
             
             """
         cursor = self.get_cursor()
@@ -342,6 +330,153 @@ class GetOne:
         result = [dict(zip(colums, row)) for row in rows]
         return result
 
+
+
+
+
+class GetAdvanced(DatabaseConnection):
+    def __init__(self):
+        super().__init__()
+
+    def get_lone_user(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+                SELECT U.USER_ID, U.NAME, U.SURNAME, U.EMAIL, U.PASSWORD, U.ADDRESS
+                    FROM "User" U
+                    LEFT JOIN "Agent" A ON U.USER_ID = A.USER_ID
+                    LEFT JOIN "Client" C ON U.USER_ID = C.USER_ID
+                    LEFT JOIN "Manager" M ON U.USER_ID = M.USER_ID
+                    WHERE A.USER_ID IS NULL
+                    AND C.USER_ID IS NULL
+                    AND M.USER_ID IS NULL
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+
+        if not rows:
+            raise HTTPException(status_code=404, detail="No lone users found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_user_with_role(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+                SELECT 
+                    U.USER_ID,
+                    U.NAME,
+                    U.SURNAME,
+                    U.EMAIL,
+                    U.PASSWORD,
+                    U.ADDRESS,
+                    CASE 
+                        WHEN A.USER_ID IS NOT NULL THEN 'Agent'
+                        WHEN C.USER_ID IS NOT NULL THEN 'Client'
+                        WHEN M.USER_ID IS NOT NULL THEN 'Manager'
+                        ELSE 'None'
+                    END AS ROLE
+                FROM "User" U
+                LEFT JOIN "Agent" A ON U.USER_ID = A.USER_ID
+                LEFT JOIN "Client" C ON U.USER_ID = C.USER_ID
+                LEFT JOIN "Manager" M ON U.USER_ID = M.USER_ID;
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No users found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+
+    def get_property_with_repair_number(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+                SELECT 
+                    P.PROPERTY_ID,P.ADDRESS, P.CITY,P.STATE,P.POSTAL_CODE,P.SIZE,
+                    P.BEDROOMS,P.BATHROOMS,P.PRICE,P.STATUS,P.TYPE, P.DESCRIPTION,COUNT(R.REPAIR_ID) AS REPAIR_NUMBER
+                FROM "Property" P
+                LEFT JOIN "Repairs" R ON P.PROPERTY_ID = R.PROPERTY_ID
+                GROUP BY 
+                    P.PROPERTY_ID, P.ADDRESS, P.CITY,  P.STATE, P.POSTAL_CODE, P.SIZE, P.BEDROOMS, P.BATHROOMS, P.PRICE, P.STATUS, P.TYPE, P.DESCRIPTION
+                HAVING COUNT(R.REPAIR_ID) > 0
+                ORDER BY REPAIR_NUMBER DESC;
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_renting_user(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                U.USER_ID, U.NAME, U.SURNAME
+            FROM "User" U
+            WHERE EXISTS (
+                SELECT 1
+                FROM "Rents" R
+                WHERE U.USER_ID = R.CLIENT_ID
+            );
+        
+            """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_property_cheaper_than_average(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                P.PROPERTY_ID, P.ADDRESS, P.CITY, P.SIZE, P.BEDROOMS, P.BATHROOMS, P.PRICE, P.STATUS, P.TYPE
+            FROM "Property" P
+            WHERE P.PRICE < (
+                SELECT AVG(PRICE)
+                FROM "Property"
+            );
+        
+            """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_property_by_type(self, type):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT * FROM "Property" WHERE TYPE = ?
+            ORDER BY PRICE ASC;
+        """, (type,))
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_property_by_city(self, city):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT * FROM "Property" WHERE CITY = ?
+            ORDER BY PRICE ASC;
+        """, (city,))
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    
+
 if __name__ == "__main__":
-    get = GetAll()
-    print(get.get_property())
+    get = GetAdvanced()
+    users = get.get_lone_user()
+    for user in users:
+        print(user)
+
+

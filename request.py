@@ -20,6 +20,7 @@ app = FastAPI(description="""
 """,)
 
 app.include_router(get_requests.router)
-app.include_router(update_requests.router)
-app.include_router(delete_requests.router)
-app.include_router(post_requests.router)
+app.include_router(post_requests.router, tags=["POST"])
+app.include_router(update_requests.router, tags=["UPDATE"])
+app.include_router(delete_requests.router, tags=["DELETE"])
+

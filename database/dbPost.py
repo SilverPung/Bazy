@@ -5,12 +5,12 @@ class InsertOne(DatabaseConnection):
     def __init__(self):
         super().__init__()
 
-    def insert_agent(self, license_number, commision_rate, employement_date):
+    def insert_agent(self,user_id, license_number, commision_rate, employement_date):
         cursor = self.get_cursor()
         cursor.execute('''
-            INSERT INTO "Agent" (LICENSE_NUMBER, COMMISION_RATE, EMPLOYEMENT_DATE)
-            VALUES (?, ?, ?)
-        ''', (license_number, commision_rate, employement_date))
+            INSERT INTO "Agent" (USER_ID, LICENSE_NUMBER, COMMISION_RATE, EMPLOYEMENT_DATE)
+            VALUES (?, ?, ?, ?)
+        ''', (user_id, license_number, commision_rate, employement_date))
         self.commit()
 
     def insert_agreement(self, title, description, agreement_date, user_id):
@@ -21,20 +21,20 @@ class InsertOne(DatabaseConnection):
         ''', (title, description, agreement_date, user_id))
         self.commit()
 
-    def insert_client(self, budget, preffered_location):
+    def insert_client(self,user_id ,budget, preffered_location):
         cursor = self.get_cursor()
         cursor.execute('''
-            INSERT INTO "Client" (BUDGET, PREFFERED_LOCATION)
-            VALUES (?, ?)
-        ''', (budget, preffered_location))
+            INSERT INTO "Client" (USER_ID ,BUDGET, PREFFERED_LOCATION)
+            VALUES (?, ?, ?)
+        ''', (user_id,budget, preffered_location))
         self.commit()
 
-    def insert_manager(self, supervision_area, employment_date):
+    def insert_manager(self,user_id, supervision_area, employment_date):
         cursor = self.get_cursor()
         cursor.execute('''
-            INSERT INTO "Manager" (SUPERVISION_AREA, EMPLOYMENT_DATE)
-            VALUES (?, ?)
-        ''', (supervision_area, employment_date))
+            INSERT INTO "Manager" (USER_ID, SUPERVISION_AREA, EMPLOYEMENT_DATE)
+            VALUES (?, ?, ?)
+        ''', (user_id, supervision_area, employment_date))
         self.commit()
 
     def insert_manager_agent(self, manager_id, agent_id):
@@ -116,6 +116,34 @@ class InsertOne(DatabaseConnection):
             VALUES (?, ?, ?, ?, ?)
         ''', (name, surname, email, password, address))
         self.commit()
+
+
+class InsertByProcedure(DatabaseConnection):
+        
+    def __init__(self):
+        super().__init__()
+
+    def insert_new_client(self, name, surname, email, password, address, budget, preffered_location):
+        cursor = self.get_cursor()
+        cursor.execute('''
+            EXECUTE PROCEDURE CREATE_CLIENT (?, ?, ?, ?, ?, ?, ?)
+        ''', (name, surname, email, password, address, budget, preffered_location))
+        self.commit()
+        
+    def insert_new_agent(self, name, surname, email, password, address, license_number, commision_rate, employement_date):
+        cursor = self.get_cursor()
+        cursor.execute('''
+            EXECUTE PROCEDURE CREATE_AGENT (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (name, surname, email, password, address, license_number, commision_rate, employement_date))
+        self.commit()
+    
+    def insert_new_manager(self, name, surname, email, password, address, supervision_area, employment_date):
+        cursor = self.get_cursor()
+        cursor.execute('''
+            EXECUTE PROCEDURE CREATE_MANAGER (?, ?, ?, ?, ?, ?, ?)
+        ''', (name, surname, email, password, address, supervision_area, employment_date))
+        self.commit()
+
 
 if __name__ == '__main__':
     insert = InsertOne()

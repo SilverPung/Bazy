@@ -1,114 +1,111 @@
-from database.dbGet import GetAll,GetOne
+from database.dbGet import GetAll, GetOne
 from fastapi import APIRouter
-
 
 router = APIRouter()
 GetAll = GetAll()
 GetOne = GetOne()
 
-
-@router.get("/agency/property")
+@router.get("/agency/property", tags=["GetAll"])
 def get_property():
     return GetAll.get_property()
 
-@router.get("/agency/user")
+@router.get("/agency/user", tags=["GetAll"])
 def get_user():
     return GetAll.get_user()
 
-@router.get("/agency/repair")
+@router.get("/agency/repair", tags=["GetAll"])
 def get_repairs():
     return GetAll.get_repairs()
 
-@router.get("/agency/meeting")
+@router.get("/agency/meeting", tags=["GetAll"])
 def get_meeting():
     return GetAll.get_meeting()
 
-@router.get("/agency/sale")
+@router.get("/agency/sale", tags=["GetAll"])
 def get_sales():
     return GetAll.get_sales()
 
-@router.get("/agency/rent")
+@router.get("/agency/rent", tags=["GetAll"])
 def get_rent():
     return GetAll.get_rent()
 
-@router.get("/agency/payment")
+@router.get("/agency/payment", tags=["GetAll"])
 def get_payment():
     return GetAll.get_payment()
 
-@router.get("/agency/tel_number")
+@router.get("/agency/tel_number", tags=["GetAll"])
 def get_tel_number():
     return GetAll.get_tel_number()
 
-@router.get("/agency/review")
+@router.get("/agency/review", tags=["GetAll"])
 def get_reviews():
     return GetAll.get_reviews()
 
-@router.get("/agency/agreement")
+@router.get("/agency/agreement", tags=["GetAll"])
 def get_agreements():
     return GetAll.get_agreements()
 
-@router.get("/agency/agent")
+@router.get("/agency/agent", tags=["GetAll"])
 def get_agent():
     return GetAll.get_agent()
 
-@router.get("/agency/client")
+@router.get("/agency/client", tags=["GetAll"])
 def get_client():
     return GetAll.get_client()
 
-@router.get("/agency/manager")
+@router.get("/agency/manager", tags=["GetAll"])
 def get_manager():
     return GetAll.get_manager()
 
-
-@router.get("/agency/property/{property_id}")
+@router.get("/agency/property/{property_id}", tags=["GetOne"])
 def get_property_by_id(property_id: int):
     return GetOne.get_property(property_id)
 
-@router.get("/agency/user/{user_id}")
+@router.get("/agency/user/{user_id}", tags=["GetOne"])
 def get_user_by_id(user_id: int):
     return GetOne.get_user(user_id)
 
-@router.get("/agency/repair/{repair_id}")
+@router.get("/agency/repair/{repair_id}", tags=["GetOne"])
 def get_repair_by_id(repair_id: int):
     return GetOne.get_repair(repair_id)
 
-@router.get("/agency/meeting/{meeting_id}")
+@router.get("/agency/meeting/{meeting_id}", tags=["GetOne"])
 def get_meeting_by_id(meeting_id: int):
     return GetOne.get_meeting(meeting_id)
-    
-@router.get("/agency/sale/{sale_id}")
+
+@router.get("/agency/sale/{sale_id}", tags=["GetOne"])
 def get_sale_by_id(sale_id: int):
     return GetOne.get_sell(sale_id)
 
-@router.get("/agency/rent/{rent_id}")
+@router.get("/agency/rent/{rent_id}", tags=["GetOne"])
 def get_rent_by_id(rent_id: int):
     return GetOne.get_rent(rent_id)
 
-@router.get("/agency/payment/{payment_id}")
+@router.get("/agency/payment/{payment_id}", tags=["GetOne"])
 def get_payment_by_id(payment_id: int):
     return GetOne.get_payment(payment_id)
 
-@router.get("/agency/tel_number/{tel_number_id}")
+@router.get("/agency/tel_number/{tel_number_id}", tags=["GetOne"])
 def get_tel_number_by_id(tel_number_id: int):
     return GetOne.get_tel_number(tel_number_id)
 
-@router.get("/agency/review/{review_id}")
+@router.get("/agency/review/{review_id}", tags=["GetOne"])
 def get_review_by_id(review_id: int):
     return GetOne.get_review(review_id)
 
-@router.get("/agency/agreement/{agreement_id}")
+@router.get("/agency/agreement/{agreement_id}", tags=["GetOne"])
 def get_agreement_by_id(agreement_id: int):
     return GetOne.get_agreement(agreement_id)
 
-@router.get("/agency/agent/{agent_id}")
+@router.get("/agency/agent/{agent_id}", tags=["GetOne"])
 def get_agent_by_id(agent_id: int):
     return GetOne.get_agent(agent_id)
 
-@router.get("/agency/client/{client_id}")
+@router.get("/agency/client/{client_id}", tags=["GetOne"])
 def get_client_by_id(client_id: int):
     return GetOne.get_client(client_id)
 
-@router.get("/agency/manager/{manager_id}")
+@router.get("/agency/manager/{manager_id}", tags=["GetOne"])
 def get_manager_by_id(manager_id: int):
     return GetOne.get_manager(manager_id)
 

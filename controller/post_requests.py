@@ -1,4 +1,4 @@
-from database.dbPost import InsertOne
+from database.dbPost import InsertOne, InsertByProcedure
 from fastapi import APIRouter
 
 router = APIRouter()
@@ -15,8 +15,8 @@ def insert_user(name: str, surname: str, email: str, password: str, address: str
     return {"message": "User inserted successfully"}
 
 @router.post("/agency/agent")
-def insert_agent(license_number: str, commision_rate: float, employement_date: str):
-    InsertOne.insert_agent(license_number, commision_rate, employement_date)
+def insert_agent(user_id:int ,license_number: str, commision_rate: float, employement_date: str):
+    InsertOne.insert_agent(user_id, license_number, commision_rate, employement_date)
     return {"message": "Agent inserted successfully"}
 
 @router.post("/agency/agreement")
@@ -25,13 +25,13 @@ def insert_agreement(title: str, description: str, agreement_date: str, user_id:
     return {"message": "Agreement inserted successfully"}
 
 @router.post("/agency/client")
-def insert_client(budget: float, preffered_location: str):
-    InsertOne.insert_client(budget, preffered_location)
+def insert_client(user_id: int, budget: float, preffered_location: str):
+    InsertOne.insert_client(user_id, budget, preffered_location)
     return {"message": "Client inserted successfully"}
 
 @router.post("/agency/manager")
-def insert_manager(supervision_area: str, employment_date: str):
-    InsertOne.insert_manager(supervision_area, employment_date)
+def insert_manager(user_id: int, supervision_area: str, employment_date: str):
+    InsertOne.insert_manager(user_id, supervision_area, employment_date)
     return {"message": "Manager inserted successfully"}
 
 @router.post("/agency/manager_agent")
@@ -93,3 +93,23 @@ def insert_sale(price: float, status: str, sale_date: str, property_id: int, cli
 def insert_tel_number(user_id: int, tel_number: str):
     InsertOne.insert_tel_number(user_id, tel_number)
     return {"message": "Telephone number inserted successfully"}
+
+
+@router.post("/agency/procedure/client")
+def insert_new_client(name: str, surname: str, email: str, password: str, address: str, budget: float, preffered_location: str):
+    print(f"Name: {name}, Surname: {surname}, Email: {email}, Password: {password}, Address: {address}, Budget: {budget}, Preffered Location: {preffered_location}")
+    insert_by_procedure = InsertByProcedure()  # Instantiate the class
+    insert_by_procedure.insert_new_client(name=name, surname=surname, email=email, password=password, address=address, budget=budget, preffered_location=preffered_location)
+    return {"message": "New client inserted successfully"}
+
+@router.post("/agency/procedure/agent")
+def insert_new_agent(name: str, surname: str, email: str, password: str, address: str, license_number: str, commision_rate: float, employement_date: str):
+    insert_by_procedure = InsertByProcedure()  # Instantiate the class
+    insert_by_procedure.insert_new_agent(name, surname, email, password, address, license_number, commision_rate, employement_date)
+    return {"message": "New agent inserted successfully"}
+
+@router.post("/agency/procedure/manager")
+def insert_new_manager(name: str, surname: str, email: str, password: str, address: str, supervision_area: str, employment_date: str):
+    insert_by_procedure = InsertByProcedure()  # Instantiate the class
+    insert_by_procedure.insert_new_manager(name, surname, email, password, address, supervision_area, employment_date)
+    return {"message": "New manager inserted successfully"}
