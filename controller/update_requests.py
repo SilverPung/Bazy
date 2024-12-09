@@ -40,8 +40,8 @@ def update_payment(payment_id: int, amount: float, payment_date: str, status: st
     return {"status": "Payment updated"}
 
 @router.put("/agency/property/{property_id}")
-def update_property(property_id: int, address: str, city: str, state: str, postal_code: str, size: float, bedrooms: int, bathrooms: int, price: float, status: str, type: str, description: str):
-    UpdateOne.update_property(property_id, address, city.capitalize(), state, postal_code, size, bedrooms, bathrooms, price, status, type, description)
+def update_property(property_id: int, address: str, city: str, state: str, postal_code: str, size: int, bedrooms: int, bathrooms: int, price: int, type1: str, description: str):
+    UpdateOne.update_property(property_id, address, city.capitalize(), state, postal_code, size, bedrooms, bathrooms, price, type1, description)
     return {"status": "Property updated"}
 
 @router.put("/agency/rent/{rent_id}")

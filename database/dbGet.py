@@ -402,7 +402,7 @@ class GetAdvanced(DatabaseConnection):
         cursor.execute("""
                 SELECT 
                     P.PROPERTY_ID,P.ADDRESS, P.CITY,P.STATE,P.POSTAL_CODE,P.SIZE,
-                    P.BEDROOMS,P.BATHROOMS,P.PRICE,P.STATUS,P.TYPE, P.DESCRIPTION,COUNT(R.REPAIR_ID) AS REPAIR_NUMBER
+                    P.BEDROOMS,P.BATHROOMS,P.PRICE,P.TYPE, P.DESCRIPTION,COUNT(R.REPAIR_ID) AS REPAIR_NUMBER
                 FROM "Property" P
                 LEFT JOIN "Repairs" R ON P.PROPERTY_ID = R.PROPERTY_ID
                 GROUP BY 
@@ -441,7 +441,7 @@ class GetAdvanced(DatabaseConnection):
         cursor = self.get_cursor()
         cursor.execute("""
             SELECT 
-                P.PROPERTY_ID, P.ADDRESS, P.CITY, P.SIZE, P.BEDROOMS, P.BATHROOMS, P.PRICE, P.STATUS, P.TYPE
+                P.PROPERTY_ID, P.ADDRESS, P.CITY, P.SIZE, P.BEDROOMS, P.BATHROOMS, P.PRICE, P.TYPE
             FROM "Property" P
             WHERE P.PRICE < (
                 SELECT AVG(PRICE)
@@ -605,7 +605,6 @@ class GetAdvanced(DatabaseConnection):
                 P.BEDROOMS,
                 P.BATHROOMS,
                 P.PRICE,
-                P.STATUS,
                 P.TYPE,
                 P.DESCRIPTION
             FROM 
@@ -657,4 +656,52 @@ class GetAdvanced(DatabaseConnection):
         result = [dict(zip(colums, row)) for row in rows]
         return result
 
-
+    def get_property_not_s_or_r_cheaper_then(self,budget):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                P.PROPERTY_ID,
+                P.ADDRESS,
+                P.CITY,
+                P.STATE,
+                P.POSTAL_CODE,
+                P.SIZE,
+                P.BEDROOMS,
+                P.BATHROOMS,
+                P.PRICE,
+                P.TYPE,
+                P.DESCRIPTION
+            FROM 
+                "Property" P
+            WHERE P.PRICE > ?
+            AND NOT EXISTS (
+                SELECT 1
+                FROM "Sales" S
+                WHERE P.PROPERTY_ID = S.PROPERTY_ID
+                AND S.STATUS IN ('Pending', 'Completed')
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM "Rents" R
+                WHERE P.PROPERTY_ID = R.PROPERTY_ID
+                AND R.STATUS IN ('Pending', 'Active')
+            );
+        """,(budget,))
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No properties found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result
+    
+    def get_possible_property_types(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT DISTINCT TYPE FROM "Property"
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No types found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result

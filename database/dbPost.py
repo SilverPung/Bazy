@@ -61,12 +61,13 @@ class InsertOne(DatabaseConnection):
         ''', (amount, payment_date, status, method, rent_id))
         self.commit()
 
-    def insert_property(self, address, city, state, postal_code, size, bedrooms, bathrooms, price, status, type, description):
+    def insert_property(self, address, city, state, postal_code, size, bedrooms, bathrooms, price, type1, description):
+        print(f"adress: {address}, city: {city}, state: {state}, postal_code: {postal_code}, size: {size}, bedrooms: {bedrooms}, bathrooms: {bathrooms}, price: {price}, type: {type1}, description: {description}")
         cursor = self.get_cursor()
         cursor.execute('''
-            INSERT INTO "Property" (ADDRESS, CITY, STATE, POSTAL_CODE, SIZE, BEDROOMS, BATHROOMS, PRICE, STATUS, TYPE, DESCRIPTION)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (address, city, state, postal_code, size, bedrooms, bathrooms, price, status, type, description))
+            INSERT INTO "Property" (ADDRESS, CITY, STATE, POSTAL_CODE, SIZE, BEDROOMS, BATHROOMS, PRICE, TYPE, DESCRIPTION)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (address, city, state, postal_code, size, bedrooms, bathrooms, price, type1, description))
         self.commit()
 
     def insert_rent(self, start_date, end_date, deposit, status, client_id, property_id):

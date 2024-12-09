@@ -11,29 +11,7 @@ cur = con.cursor()
 
 try:
     cur.execute("""
-    
-     CREATE OR ALTER TRIGGER SOLD_PROPERTY_TRIGGER
-        BEFORE INSERT OR UPDATE ON "Sales"
-        AS
-        BEGIN
-            IF (EXISTS (
-                SELECT 1
-                FROM "Sales"
-                WHERE PROPERTY_ID = NEW.PROPERTY_ID
-                AND STATUS IN ('Pending', 'Completed')
-                AND SALE_ID != NEW.SALE_ID
-            )) THEN
-                EXCEPTION PROPERTY_SOLD_OR_RENTED;
-
- 
-            IF (EXISTS (
-                SELECT 1
-                FROM "Rents"
-                WHERE PROPERTY_ID = NEW.PROPERTY_ID
-                AND STATUS IN ('Pending', 'Active')
-            )) THEN
-                EXCEPTION PROPERTY_SOLD_OR_RENTED;
-        END;           
+        ALTER TABLE "Property" ADD CONSTRAINT "Property_Type" CHECK (TYPE IN ('House', 'Apartment','Flat' 'Condo', 'Townhouse', 'Duplex', 'Triplex', 'Fourplex', 'Villa', 'Cottage', 'Bungalow', 'Mobile Home', 'Other'))  
     """)
     print("Procedure created or updated.")
 except fdb.DatabaseError as e:

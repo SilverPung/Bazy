@@ -68,13 +68,13 @@ class UpdateOne(DatabaseConnection):
         ''', (amount, payment_date, status, method, rent_id, payment_id))
         self.commit()
 
-    def update_property(self, property_id, address, city, state, postal_code, size, bedrooms, bathrooms, price, status, type, description):
+    def update_property(self, property_id, address, city, state, postal_code, size, bedrooms, bathrooms, price, type1, description):
         cursor = self.get_cursor()
         cursor.execute('''
             UPDATE "Property"
-            SET ADDRESS = ?, CITY = ?, STATE = ?, POSTAL_CODE = ?, SIZE = ?, BEDROOMS = ?, BATHROOMS = ?, PRICE = ?, STATUS = ?, TYPE = ?, DESCRIPTION = ?
+            SET ADDRESS = ?, CITY = ?, STATE = ?, POSTAL_CODE = ?, SIZE = ?, BEDROOMS = ?, BATHROOMS = ?, PRICE = ?, TYPE = ?, DESCRIPTION = ?
             WHERE PROPERTY_ID = ?
-        ''', (address, city, state, postal_code, size, bedrooms, bathrooms, price, status, type, description, property_id))
+        ''', (address, city, state, postal_code, size, bedrooms, bathrooms, price, type1, description, property_id))
         self.commit()
 
     def update_rent(self, rent_id, start_date, end_date, deposit, status, client_id, property_id):

@@ -1,9 +1,10 @@
 from database.dbGet import GetAdvanced, GetAll, GetOne
+from database.dbPost import InsertOne
 
 
 
 if __name__ == "__main__":
     get = GetAdvanced()
-    for user in get.get_rents_with_money_paid_in_payment():
-        print(user)
+    for output in get.get_possible_property_types():
+        print(output)
 
