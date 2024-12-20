@@ -1,4 +1,5 @@
 from database.connection import DatabaseConnection
+import sys
 
 class UpdateOne(DatabaseConnection):
     
@@ -69,6 +70,7 @@ class UpdateOne(DatabaseConnection):
         self.commit()
 
     def update_property(self, property_id, address, city, state, postal_code, size, bedrooms, bathrooms, price, type1, description):
+        print(type1, file=sys.stderr)
         cursor = self.get_cursor()
         cursor.execute('''
             UPDATE "Property"

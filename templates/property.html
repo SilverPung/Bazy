@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Nieruchomości{% endblock %}
+
+{% block content %}
+<div id="propertyList">
+    <h2>Nieruchomości</h2>
+    <p>Lista dostępnych nieruchomości:</p>
+    <select id="propertySelect">
+        <option value="">Wybierz nieruchomość</option>
+        {% for property in properties %}
+        <option value="{{ property.PROPERTY_ID }}">{{ property.STATE }} {{ property.CITY }} {{ property.ADDRESS }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="propertyForm" style="display:none;">
+    <h3>Edytuj nieruchomość</h3>
+    <form id="editPropertyForm">
+        <label for="address">Adres:</label>
+        <input type="text" id="address" name="address"><br>
+        <label for="city">Miasto:</label>
+        <input type="text" id="city" name="city"><br>
+        <label for="state">Stan:</label>
+        <input type="text" id="state" name="state"><br>
+        <label for="postal_code">Kod pocztowy:</label>
+        <input type="text" id="postal_code" name="postal_code"><br>
+        <label for="size">Rozmiar:</label>
+        <input type="number" id="size" name="size"><br>
+        <label for="bedrooms">Sypialnie:</label>
+        <input type="number" id="bedrooms" name="bedrooms"><br>
+        <label for="bathrooms">Łazienki:</label>
+        <input type="number" id="bathrooms" name="bathrooms"><br>
+        <label for="price">Cena:</label>
+        <input type="number" id="price" name="price"><br>
+        <label for="type">Typ:</label>
+        <input type="text" id="type" name="type"><br>
+        <label for="description">Opis:</label>
+        <textarea id="description" name="description"></textarea><br>
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('propertySelect').addEventListener('change', function() {
+    var propertyId = this.value;
+    if (propertyId) {
+        // Fetch property details using AJAX or similar method
+        fetch(`/agency/property/${propertyId}`)
+            .then(response => response.json())
+            .then(data => {
+                data = data[0];
+                document.getElementById('address').value = data.ADDRESS;
+                document.getElementById('city').value = data.CITY;
+                document.getElementById('state').value = data.STATE;
+                document.getElementById('postal_code').value = data.POSTAL_CODE;
+                document.getElementById('size').value = data.SIZE;
+                document.getElementById('bedrooms').value = data.BEDROOMS;
+                document.getElementById('bathrooms').value = data.BATHROOMS;
+                document.getElementById('price').value = data.PRICE;
+                document.getElementById('type').value = data.TYPE;
+                document.getElementById('description').value = data.DESCRIPTION;
+                document.getElementById('propertyForm').style.display = 'block';
+            });
+    } else {
+        document.getElementById('propertyForm').style.display = 'none';
+        console.log('No property selected');
+    }
+});
+document.getElementById('editPropertyForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    var propertyId = document.getElementById('propertySelect').value;
+    var address = document.getElementById('address').value;
+    var city = document.getElementById('city').value;
+    var state = document.getElementById('state').value;
+    var postalCode = document.getElementById('postal_code').value;
+    var size = document.getElementById('size').value;
+    var bedrooms = document.getElementById('bedrooms').value;
+    var bathrooms = document.getElementById('bathrooms').value;
+    var price = document.getElementById('price').value;
+    var type = document.getElementById('type').value; // Convert to integer
+    var description = document.getElementById('description').value;
+
+    let queryParams = new URLSearchParams({
+        property_id: propertyId,
+        address: address,
+        city: city,
+        state: state,
+        postal_code: postalCode,
+        size: size,
+        bedrooms: bedrooms,
+        bathrooms: bathrooms,
+        price: price,
+        type1: type,
+        description: description
+    }).toString();
+    console.log(queryParams);
+
+    fetch(`/agency/property/${propertyId}?${queryParams}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status == 'Property updated') {
+            alert('Property updated successfully');
+        } else {
+            alert('Failed to update property');
+        }
+        console.log(data);
+    });
+});
+</script>
+{% endblock %}
+

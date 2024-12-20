@@ -1,0 +1,113 @@
+.header {
+    background-color: #f5f5fe;
+    padding: 20px;
+    text-align: center;
+    color: #0d0d0d;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+.nav_list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.nav_list li {
+    margin: 0 15px;
+}
+
+.nav_list a {
+    text-decoration: none;
+    color: white;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+.nav_list a:hover {
+    color: #ddd;
+}
+.nav {
+    margin-top: 20px;
+    background-color: #353535;
+    padding: 10px 0;
+}
+
+#propertyList {
+    text-align: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+#propertyList h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+#propertySelect {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#propertyForm {
+    justify-content: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    margin: 0 auto;
+    margin-top: 20px;
+
+}
+
+#propertyForm h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+#propertyForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#propertyForm input[type="text"],
+#propertyForm input[type="number"],
+#propertyForm textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#propertyForm button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#propertyForm button:hover {
+    background-color: #45a049;
+}

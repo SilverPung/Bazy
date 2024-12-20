@@ -11,7 +11,7 @@ cur = con.cursor()
 
 try:
     cur.execute("""
-        ALTER TABLE "Property" ADD CONSTRAINT "Property_Type" CHECK (TYPE IN ('House', 'Apartment','Flat' 'Condo', 'Townhouse', 'Duplex', 'Triplex', 'Fourplex', 'Villa', 'Cottage', 'Bungalow', 'Mobile Home', 'Other'))  
+        ALTER TABLE "Property" ADD CONSTRAINT "Property_Type" CHECK (TYPE IN ('House', 'Apartment','Flat', 'Condo', 'Townhouse', 'Duplex', 'Triplex', 'Fourplex', 'Villa', 'Cottage', 'Bungalow', 'Mobile Home', 'Other')) 
     """)
     print("Procedure created or updated.")
 except fdb.DatabaseError as e:

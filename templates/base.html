@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {% endblock head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The Board{% endblock title %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Agencja Nieruchomości The Board</h1>
+        <nav class="nav">
+            <ul class="nav_list">
+                <li><a href="/webpage/home">Strona główna</a></li>
+                <li><a href="/webpage/property">Nieruchomości</a></li>
+                <li><a href="/webpage/client">Klienci</a></li>
+                <li><a href="/webpage/meeting">Spotkania</a></li>
+                <li><a href="/webpage/sales">Sprzedarze</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="main">
+        {% block content %}
+        
+        {% endblock content %} 
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2020 Agencja Nieruchomości The Board</p>'
+    </footer>
+</body>
+</html>
