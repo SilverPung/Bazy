@@ -173,5 +173,17 @@ def get_property_not_sold_or_rented():
 def get_rents_with_money_paid_in_payment():
     return GetAdvanced.get_rents_with_money_paid_in_payment()
 
+@router.get("/agency/property_not_s_or_r_cheaper_then/{budget}", tags=["GetAdvanced"])
+def get_property_not_s_or_r_cheaper_then(budget: int):
+    return GetAdvanced.get_property_not_s_or_r_cheaper_then(budget)
+
+@router.get("/agency/possible_property_types", tags=["GetAdvanced"])
+def get_possible_property_types():
+    return GetAdvanced.get_possible_property_types()
+
+@router.get("/agency/review_with_client_and_agent", tags=["GetAdvanced"])
+def get_review_with_client_and_agent():
+    return GetAdvanced.get_review_with_client_and_agent()
+
 
 

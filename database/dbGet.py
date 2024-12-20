@@ -705,3 +705,34 @@ class GetAdvanced(DatabaseConnection):
             raise HTTPException(status_code=404, detail="No types found")
         result = [dict(zip(colums, row)) for row in rows]
         return result
+    
+    def get_review_with_client_and_agent(self):
+        cursor = self.get_cursor()
+        cursor.execute("""
+            SELECT 
+                R.REVIEW_ID,
+                R.RATING,
+                R.DESCRIPTION,
+                C.USER_ID AS CLIENT_ID,
+                UC.NAME AS CLIENT_NAME,
+                UC.SURNAME AS CLIENT_SURNAME,
+                A.USER_ID AS AGENT_ID,
+                UA.NAME AS AGENT_NAME,
+                UA.SURNAME AS AGENT_SURNAME
+            FROM 
+                "Review" R
+            JOIN
+                "Client" C ON R.CLIENT_ID = C.USER_ID
+            JOIN
+                "Agent" A ON R.AGENT_ID = A.USER_ID
+            JOIN 
+                "User" UC ON C.USER_ID = UC.USER_ID
+            JOIN
+                "User" UA ON A.USER_ID = UA.USER_ID;
+        """)
+        colums = [desc[0] for desc in cursor.description]
+        rows = cursor.fetchall()
+        if not rows:
+            raise HTTPException(status_code=404, detail="No reviews found")
+        result = [dict(zip(colums, row)) for row in rows]
+        return result

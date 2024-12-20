@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from controller import get_requests, update_requests, delete_requests, post_requests
 
 app = FastAPI(description="""
-## Welcome to My API Connecing to the firebird database with following tables:\n
+## Welcome to an API Connecing to the firebird database with following tables:\n
 -Agent\n
 -Agreement\n
 -Client\n
