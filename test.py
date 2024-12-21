@@ -1,10 +1,24 @@
-from database.dbGet import GetAdvanced, GetAll, GetOne
-from database.dbPost import InsertOne
+import fdb
+from datetime import date
 
+# Connect to the database
+con = fdb.connect(
+    dsn='localhost:C:/Program Files/Firebird/agency.fdb',
+    user='SYSDBA',
+    password='postgres'
+)
+cur = con.cursor()
 
+try:
+    cur.execute("""
+        SELECT RDB$CONSTRAINT_NAME, RDB$RELATION_NAME
+    FROM RDB$RELATION_CONSTRAINTS
+    WHERE RDB$CONSTRAINT_TYPE = 'FOREIGN KEY';
 
-if __name__ == "__main__":
-    get = GetAdvanced()
-    for output in get.get_review_with_client_and_agent():
-        print(output)
+    """)
+    for row in cur.fetchall():
+        print(row)
+        
+except fdb.DatabaseError as e:
+    print(f"Error creating/updating Procedure: {e}")
 

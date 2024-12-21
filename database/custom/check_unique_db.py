@@ -14,7 +14,7 @@ def show_client_table():
         cursor = con.cursor()
 
         # Query to select all columns from the "Client" table
-        cursor.execute('SELECT * FROM "Repairs"')
+        cursor.execute('SELECT * FROM "Agent"')
 
         # Fetch the column names
         column_names = [desc[0] for desc in cursor.description]

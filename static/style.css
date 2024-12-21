@@ -38,6 +38,7 @@
     padding: 10px 0;
 }
 
+
 #propertyList {
     text-align: center;
     justify-content: center;
@@ -63,7 +64,7 @@
     box-sizing: border-box;
 }
 
-#propertyForm {
+.propertyForm {
     justify-content: center;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
@@ -75,22 +76,22 @@
 
 }
 
-#propertyForm h3 {
+.propertyForm h3 {
     margin-top: 0;
     font-size: 1.5em;
     color: #333;
 }
 
-#propertyForm label {
+.propertyForm label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
     color: #555;
 }
 
-#propertyForm input[type="text"],
-#propertyForm input[type="number"],
-#propertyForm textarea {
+.propertyForm input[type="text"],
+.propertyForm input[type="number"],
+.propertyForm textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -98,8 +99,7 @@
     border-radius: 4px;
     box-sizing: border-box;
 }
-
-#propertyForm button {
+#editPropertyForm button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -108,6 +108,29 @@
     cursor: pointer;
 }
 
-#propertyForm button:hover {
+#editPropertyForm button:hover {
+    background-color: #45a049;
+}
+
+#deleteProperty {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#addPropertyForm button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#addPropertyForm button:hover {
     background-color: #45a049;
 }
