@@ -186,4 +186,11 @@ def get_review_with_client_and_agent():
     return GetAdvanced.get_review_with_client_and_agent()
 
 
+@router.get("/agency/repairs_with_property", tags=["GetAdvanced"])
+def get_repairs_with_property():
+    return GetAdvanced.get_repairs_with_property()
 
+
+@router.get("/agency/repair_with_property/{repair_id}", tags=["GetAdvanced"])
+def get_repair_with_property(repair_id: int):
+    return GetAdvanced.get_repair_with_property(repair_id)

@@ -118,3 +118,11 @@
 .classform button:hover {
     background-color: #45a049;
 }
+.classblock input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

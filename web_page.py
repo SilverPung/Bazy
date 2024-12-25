@@ -44,7 +44,11 @@ async def sales(request: Request):
 
 @router.get("/webpage/repairs", response_class=HTMLResponse)
 async def repairs(request: Request):
-    repairs = get_all.get_repairs()
+    repairs = get_advanced.get_repairs_with_property()
+    properties = get_all.get_property()
     if not repairs:
         raise HTTPException(status_code=404, detail="No repairs found")
-    return templates.TemplateResponse("repairs.html", {"request": request, "repairs": repairs})
+    if not properties:
+        raise HTTPException(status_code=404, detail="No properties found")
+    
+    return templates.TemplateResponse("repairs.html", {"request": request, "repairs": repairs, "properties": properties})

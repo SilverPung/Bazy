@@ -873,4 +873,58 @@ class GetAdvanced(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
         
+    def get_repairs_with_property(self):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    R.REPAIR_ID,
+                    R.PROPERTY_ID,
+                    R.DESCRIPTION,
+                    R.STATUS,
+                    R.REPAIR_DATE,
+                    P.ADDRESS,
+                    P.CITY,
+                    P.STATE
+                FROM 
+                    "Repairs" R
+                JOIN
+                    "Property" P ON R.PROPERTY_ID = P.PROPERTY_ID;
+            """)
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No repairs found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    def get_repair_with_property(self,repair_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    R.REPAIR_ID,
+                    R.PROPERTY_ID,
+                    R.DESCRIPTION,
+                    R.STATUS,
+                    R.REPAIR_DATE,
+                    P.ADDRESS,
+                    P.CITY,
+                    P.STATE
+                FROM 
+                    "Repairs" R
+                JOIN
+                    "Property" P ON R.PROPERTY_ID = P.PROPERTY_ID
+                WHERE R.REPAIR_ID = ?;
+            """,(repair_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No repairs found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
     
