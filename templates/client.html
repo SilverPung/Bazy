@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+
+{% block title %}Klienci{% endblock %}
+
+{% block content %}
+<div id="clientFormAdd" class="classblock">
+    <h3>Przydziel nowego klienta do użytkownika</h3>
+    
+    <form id="attachClientForm" class="classform">
+        <label for="user">Użytkownik:</label>
+        <select id="userSelect" class="selectclass">
+            <option value="">Wybierz użytkownika</option>
+            {% for user in users %}
+            <option value="{{ user.USER_ID }}">{{ user.NAME }} {{ user.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="preffered_location">Preferowana lokalizacja:</label>
+        <input type="text" id="attach_preffered_location" name="preffered_location"><br>
+        <label for="budget">Budżet:</label>
+        <input type="number" id="attach_budget" name="budget"><br>
+        <button type="submit">Dodaj klienta</button>
+    </form>
+</div>
+
+<div id="userFormAdd" class="classblock">
+    <h3>Dodaj nowego klienta</h3>
+    <form id="addUserForm" class="classform">
+        <label for="name">Imię:</label>
+        <input type="text" id="add_name" name="name"><br>
+        <label for="surname">Nazwisko:</label>
+        <input type="text" id="add_surname" name="surname"><br>
+        <label for="email">Email:</label>
+        <input type="email" id="add_email" name="email"><br>
+        <label for="password">Hasło:</label>
+        <input type="password" id="add_password" name="password"><br>
+        <label for="address">Adres:</label>
+        <input type="text" id="add_address" name="address"><br>
+        <label for="budget">Budżet:</label>
+        <input type="number" id="add_budget" name="budget"><br>
+        <label for="preffered_location">Preferowana lokalizacja:</label>
+        <input type="text" id="add_preffered_location" name="preffered_location"><br>
+        <button id="addClient" type="submit">Dodaj użytkownika</button>
+</div>
+
+<div id="clientList" class="classblock">
+    <h2>Edytuj wybranego klienta</h2>
+    <p>Lista dostępnych klientów:</p>
+    <select id="clientSelect" class="selectclass">
+        <option value="">Wybierz klienta</option>
+        {% for client in clients %}
+        <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }} "{{client.PREFFERED_LOCATION}}"</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="clientFormEdit" class="classblock" style="display: none;">
+    <h3>Edytuj klienta</h3>
+    <form id="editClientForm" class="classform">
+        <label for="name">Imię:</label>
+        <input type="text" id="edit_name" name="name"><br>
+        <label for="surname">Nazwisko:</label>
+        <input type="text" id="edit_surname" name="surname"><br>
+        <label for="email">Email:</label>
+        <input type="email" id="edit_email" name="email"><br>
+        <label for="password">Hasło:</label>
+        <input type="password" id="edit_password" name="password"><br>
+        <label for="address">Adres:</label>
+        <input type="text" id="edit_address" name="address"><br>
+        <label for="budget">Budżet:</label>
+        <input type="number" id="edit_budget" name="budget"><br>
+        <label for="preffered_location">Preferowana lokalizacja:</label>
+        <input type="text" id="edit_preffered_location" name="preffered_location"><br>
+        <button type="submit">Edytuj klienta</button>
+    </form>
+
+</div>
+<script>
+document.getElementById("attachClientForm").addEventListener("submit", function(event){
+    event.preventDefault();
+    var user = document.getElementById("userSelect").value;
+    var preffered_location = document.getElementById("attach_preffered_location").value;
+    var budget = document.getElementById("attach_budget").value;
+    if (user === "" || preffered_location === "" || budget === ""){
+        alert("Wypełnij wszystkie pola");
+        return;
+    }
+    var queryParams = new URLSearchParams({
+        user_id: user,
+        preffered_location: preffered_location,
+        budget: budget
+    })
+    fetch(`/agency/client?${queryParams}`, {
+        method: "POST"
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if(data.message === "Client inserted successfully"){
+            alert("Dodano nowego klienta");
+            location.reload();
+        } else {
+            alert("Nie udało się dodać nowego klienta "+ data.detail);
+        }
+    });
+});
+
+document.getElementById("addClient").addEventListener("click", function(event){
+    event.preventDefault();
+    var name = document.getElementById("add_name").value;
+    var surname = document.getElementById("add_surname").value;
+    var email = document.getElementById("add_email").value;
+    var password = document.getElementById("add_password").value;
+    var address = document.getElementById("add_address").value;
+    var budget = document.getElementById("add_budget").value;
+    var preffered_location = document.getElementById("add_preffered_location").value;
+    
+    var queryParams = new URLSearchParams({
+        name: name,
+        surname: surname,
+        email: email,
+        password: password,
+        address: address,
+        budget: budget,
+        preffered_location: preffered_location
+    })
+    fetch(`/agency/procedure/client?${queryParams}`, {
+        method: "POST"
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if(data.message === "New client inserted successfully"){
+            alert("Dodano nowego klienta");
+            location.reload();
+        } else {
+            alert("Nie udało się dodać nowego klienta "+ data.detail);
+        }
+    });
+});
+
+document.getElementById("clientSelect").addEventListener("change", function(event){
+    var user = document.getElementById("clientSelect").value;
+    if (user === ""){
+        document.getElementById("clientFormEdit").style.display = "none";
+        console.log("User not selected");
+        return;
+    }
+    fetch(`/agency/client/${user}`, {
+        method: "GET"
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data);
+        data = data[0];
+        document.getElementById("edit_name").value = data.NAME;
+        document.getElementById("edit_surname").value = data.SURNAME;
+        document.getElementById("edit_email").value = data.EMAIL;
+        document.getElementById("edit_password").value = data.PASSWORD;
+        document.getElementById("edit_address").value = data.ADDRESS;
+        document.getElementById("edit_budget").value = data.BUDGET;
+        document.getElementById("edit_preffered_location").value = data.PREFFERED_LOCATION;
+        document.getElementById("clientFormEdit").style.display = "block";
+    });
+});
+</script>
+
+
+{% endblock %}
+
+    

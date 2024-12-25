@@ -3,9 +3,9 @@
 {% block title %}Nieruchomości{% endblock %}
 
 {% block content %}
-<div id="propertyFormAdd" class="propertyForm">
+<div id="propertyFormAdd" class="classblock">
     <h3>Dodaj nową nieruchomość</h3>
-    <form id="addPropertyForm">
+    <form id="addPropertyForm" class="classform">
         <label for="address">Adres:</label>
         <input type="text" id="add_address" name="address"><br>
         <label for="city">Miasto:</label>
@@ -26,16 +26,16 @@
         <input type="text" id="add_type" name="type"><br>
         <label for="description">Opis:</label>
         <textarea id="add_description" name="description"></textarea><br>
-        <button type="submit">Dodaj nieruchomość</button>
+        <button type="submit" class="submitbutton">Dodaj nieruchomość</button>
     </form>
 </div>
 
 
 
-<div id="propertyList">
+<div id="propertyList" class="classblock">
     <h2>Edytuj wybraną nieruchomość</h2>
     <p>Lista dostępnych nieruchomości:</p>
-    <select id="propertySelect">
+    <select id="propertySelect" class="selectclass">
         <option value="">Wybierz nieruchomość</option>
         {% for property in properties %}
         <option value="{{ property.PROPERTY_ID }}">{{ property.STATE }} {{ property.CITY }} {{ property.ADDRESS }}</option>
@@ -43,9 +43,9 @@
     </select>
 </div>
 
-<div id="propertyFormEdit" style="display: none;" class="propertyForm">
+<div id="propertyFormEdit" style="display: none;" class="classblock">
     <h3>Edytuj nieruchomość</h3>
-    <form id="editPropertyForm">
+    <form id="editPropertyForm" class="classform">
         <label for="address">Adres:</label>
         <input type="text" id="address" name="address"><br>
         <label for="city">Miasto:</label>
@@ -66,9 +66,9 @@
         <input type="text" id="type" name="type"><br>
         <label for="description">Opis:</label>
         <textarea id="description" name="description"></textarea><br>
-        <button type="submit">Zapisz zmiany</button>
+        <button type="submit" .classform>Zapisz zmiany</button>
     </form>
-    <button id="deleteProperty">Usuń nieruchomość</button>
+    <button id="deleteProperty" class="deletebutton">Usuń nieruchomość</button>
 </div>
 
 <script>

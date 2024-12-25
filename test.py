@@ -11,9 +11,8 @@ cur = con.cursor()
 
 try:
     cur.execute("""
-        SELECT RDB$CONSTRAINT_NAME, RDB$RELATION_NAME
-    FROM RDB$RELATION_CONSTRAINTS
-    WHERE RDB$CONSTRAINT_TYPE = 'FOREIGN KEY';
+        SELECT RDB$PROCEDURE_NAME
+        FROM RDB$PROCEDURES
 
     """)
     for row in cur.fetchall():

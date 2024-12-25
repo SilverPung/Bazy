@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from database.dbGet import GetAll
+from database.dbGet import GetAll, GetAdvanced
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 get_all = GetAll()
+get_advanced = GetAdvanced()
 
 @router.get("/webpage/home", response_class=HTMLResponse)
 async def home(request: Request):
@@ -22,9 +23,10 @@ async def properties(request: Request):
 @router.get("/webpage/client", response_class=HTMLResponse)
 async def clients(request: Request):
     clients = get_all.get_client()
+    users = get_advanced.get_lone_user()
     if not clients:
         raise HTTPException(status_code=404, detail="No clients found")
-    return templates.TemplateResponse("client.html", {"request": request, "clients": clients})
+    return templates.TemplateResponse("client.html", {"request": request, "clients": clients, "users": users})
 
 @router.get("/webpage/meeting", response_class=HTMLResponse)
 async def meetings(request: Request):

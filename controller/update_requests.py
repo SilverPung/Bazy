@@ -1,8 +1,9 @@
-from database.dbUpdate import UpdateOne
+from database.dbUpdate import UpdateOne, UpdateByProcedure
 from fastapi import APIRouter
 
 router = APIRouter()
 UpdateOne = UpdateOne()
+UpdateByProcedure = UpdateByProcedure()
 
 @router.put("/agency/agent/{user_id}")
 def update_agent(user_id: int, license_number: str, commision_rate: float, employement_date: str):
@@ -73,3 +74,18 @@ def update_tel_number(user_id: int, tel_number: str):
 def update_user(user_id: int, name: str, surname: str, email: str, password: str, address: str):
     UpdateOne.update_user(user_id, name, surname, email, password, address)
     return {"status": "User updated"}
+
+@router.put("/agency/procedure/client")
+def update_client_procedure(user_id: int, name: str, surname: str, email: str, password: str, address: str, budget: float, preffered_location: str):
+    UpdateByProcedure.update_client(user_id, name, surname, email, password, address, budget, preffered_location)
+    return {"status": "Client updated"}
+
+@router.put("/agency/procedure/manager")
+def update_manager_procedure(user_id: int, name: str, surname: str, email: str, password: str, address: str, supervision_area: str, employment_date: str):
+    UpdateByProcedure.update_manager(user_id, name, surname, email, password, address, supervision_area, employment_date)
+    return {"status": "Manager updated"}
+
+@router.put("/agency/procedure/agent")
+def update_agent_procedure(user_id: int, name: str, surname: str, email: str, password: str, address: str, license_number: str, commision_rate: float, employement_date: str):
+    UpdateByProcedure.update_agent(user_id, name, surname, email, password, address, license_number, commision_rate, employement_date)
+    return {"status": "Agent updated"}

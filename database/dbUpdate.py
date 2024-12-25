@@ -174,3 +174,39 @@ class UpdateOne(DatabaseConnection):
             self.commit()
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+
+class UpdateByProcedure(DatabaseConnection):
+    def __init__(self):
+        super().__init__()
+    
+    def update_client(self, user_id, name, surname, email, password, address, budget, preffered_location):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute('''
+                EXECUTE PROCEDURE UPDATE_CLIENT(?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (user_id, name, surname, email, password, address, budget, preffered_location))
+            self.commit()
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    def update_agent(self, user_id, name, surname, email, password, address, license_number, commision_rate, employment_date):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute('''
+                EXECUTE PROCEDURE UPDATE_AGENT(?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (user_id, name, surname, email, password, address, license_number, commision_rate, employment_date))
+            self.commit()
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    def update_manager(self, user_id, name, surname, email, password, address, supervision_area, employment_date):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute('''
+                EXECUTE PROCEDURE UPDATE_MANAGER(?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (user_id, name, surname, email, password, address, supervision_area, employment_date))
+            self.commit()
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
