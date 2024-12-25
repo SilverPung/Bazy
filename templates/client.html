@@ -40,6 +40,7 @@
         <label for="preffered_location">Preferowana lokalizacja:</label>
         <input type="text" id="add_preffered_location" name="preffered_location"><br>
         <button id="addClient" type="submit">Dodaj użytkownika</button>
+    </form>
 </div>
 
 <div id="clientList" class="classblock">
@@ -70,9 +71,9 @@
         <input type="number" id="edit_budget" name="budget"><br>
         <label for="preffered_location">Preferowana lokalizacja:</label>
         <input type="text" id="edit_preffered_location" name="preffered_location"><br>
-        <button type="submit">Edytuj klienta</button>
+        <button type="submit" id="updateClient">Edytuj klienta</button>
     </form>
-
+    <button id="disconnectClient" class="deletebutton" >Odłącz klienta</button>
 </div>
 <script>
 document.getElementById("attachClientForm").addEventListener("submit", function(event){
@@ -157,6 +158,60 @@ document.getElementById("clientSelect").addEventListener("change", function(even
         document.getElementById("edit_budget").value = data.BUDGET;
         document.getElementById("edit_preffered_location").value = data.PREFFERED_LOCATION;
         document.getElementById("clientFormEdit").style.display = "block";
+    });
+});
+
+document.getElementById("updateClient").addEventListener("click",function(event){
+    event.preventDefault();
+    var user = document.getElementById("clientSelect").value;
+    var name = document.getElementById("edit_name").value;
+    var surname = document.getElementById("edit_surname").value;
+    var email = document.getElementById("edit_email").value;
+    var password = document.getElementById("edit_password").value;
+    var address = document.getElementById("edit_address").value;
+    var budget = document.getElementById("edit_budget").value;
+    var preffered_location = document.getElementById("edit_preffered_location").value;
+    var queryParams = new URLSearchParams({
+        name: name,
+        surname: surname,
+        email: email,
+        password: password,
+        address: address,
+        budget: budget,
+        preffered_location: preffered_location
+    })
+    fetch(`/agency/procedure/client/${user}?${queryParams}`, {
+        method: "PUT"
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if(data.message === "Client updated"){
+            alert("Zaktualizowano dane klienta");
+            location.reload();
+        } else {
+            alert("Nie udało się zaktualizować danych klienta "+ data.detail);
+        }
+    });
+});
+
+document.getElementById("disconnectClient").addEventListener("click", function(event){
+    event.preventDefault();
+    var user = document.getElementById("clientSelect").value;
+    if (user === ""){
+        alert("Wybierz klienta");
+        return;
+    }
+    fetch(`/agency/client/${user}`, {
+        method: "DELETE"
+    }).then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if(data.message == "Client deleted successfully"){
+            alert("Odłączono klienta");
+            location.reload();
+        } else {
+            alert("Nie udało się odłączyć klienta "+ data.detail);
+        }
     });
 });
 </script>
