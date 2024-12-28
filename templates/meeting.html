@@ -1,1 +1,203 @@
 {% extends 'base.html' %}
+
+{% block title %}Spotkania{% endblock %}
+
+{% block content %}
+<div id="meetingFormAdd" class="classblock">
+    <h3> Dodaj Spotkanie z Klientem</h3>
+    <form id="addMettingForm" class="classform">
+        <label for="client">Klient:</label>
+        <select id="clientSelect" class="selectclass">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select id="propertySelect" class="selectclass">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="agent">Agent:</label>
+        <select id="agentSelect" class="selectclass">
+            <option value="">Wybierz agenta</option>
+            {% for agent in agents %}
+            <option value="{{ agent.USER_ID }}">{{ agent.NAME }} {{ agent.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Data:</label>
+        <input type="date" id="add_date" name="date"><br>
+        <label for="time">Czas:</label>
+        <input type="time" id="add_time" name="time"><br>
+        <label for="status">Status:</label>
+        <select id="statusSelect" class="selectclass">
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="ReScheduled">ReScheduled</option>
+        </select>
+        <button id="addMeeting" type="submit">Dodaj spotkanie</button>
+    </form>
+</div>
+<div id="meetingList" class="classblock">
+    <h3> Edytuj wybrane spotkanie</h3>
+    <select id="meetingSelect" class="selectclass">
+        <option value="">Wybierz spotkanie</option>
+        {% for meeting in meetings %}
+        <option value="{{ meeting.MEETING_ID }}">{{meeting.city}} {{meeting.ADDRESS}} {{meeting.AGENT_SURNAME}} --> {{meeting.CLIENT_SURNAME}} {{ meeting.DATE_MEETING }} {{ meeting.TIME_MEETING }}</option>
+        {% endfor %}
+    </select>
+
+
+<div id="meetingFormEdit" class="classblock" style="display: none;">
+    <h3> Edytuj Spotkanie z Klientem</h3>
+    <form id="editMeetingForm" class="classform">
+        <label for="client">Klient:</label>
+        <select id="clientSelectEdit" class="selectclass">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select id="propertySelectEdit" class="selectclass">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="agent">Agent:</label>
+        <select id="agentSelectEdit" class="selectclass">
+            <option value="">Wybierz agenta</option>
+            {% for agent in agents %}
+            <option value="{{ agent.USER_ID }}">{{ agent.NAME }} {{ agent.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Data:</label>
+        <input type="date" id="edit_date" name="date"><br>
+        <label for="time">Czas:</label>
+        <input type="time" id="edit_time" name="time"><br>
+        <label for="status">Status:</label>
+        <select id="statusSelectEdit" class="selectclass">
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="ReScheduled">ReScheduled</option>
+        </select>
+        <button id="editMeeting" type="submit">Edytuj spotkanie</button>
+    </form>
+    <button id="deleteMetting" class="deletebutton">Usuń Spotkanie</button>
+</div>
+<script>
+    document.getElementById("meetingSelect").addEventListener("change", function(event){
+        var meeting = document.getElementById("meetingSelect").value;
+        if (meeting === ""){
+            document.getElementById("meetingFormEdit").style.display = "none";
+            console.log("No meeting selected");
+            return;
+        }
+        fetch(`/agency/meeting/${meeting}`, {
+            method: "GET"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            data = data[0];
+            document.getElementById("edit_date").value = data.DATE_MEETING;
+            document.getElementById("edit_time").value = data.TIME_MEETING;
+            document.getElementById("clientSelectEdit").value = data.CLIENT_ID;
+            document.getElementById("propertySelectEdit").value = data.PROPERTY_ID;
+            document.getElementById("agentSelectEdit").value = data.AGENT_ID;
+            document.getElementById("statusSelectEdit").value = data.STATUS;
+            document.getElementById("meetingFormEdit").style.display = "block";
+        });
+    });
+
+    document.getElementById("editMeeting").addEventListener("click", function(event){
+        event.preventDefault();
+        var meeting = document.getElementById("meetingSelect").value;
+        var meetingDate = document.getElementById("edit_date").value;
+        var meetingTime = document.getElementById("edit_time").value;
+        var client = document.getElementById("clientSelectEdit").value;
+        var property = document.getElementById("propertySelectEdit").value;
+        var agent = document.getElementById("agentSelectEdit").value;
+        var status = document.getElementById("statusSelectEdit").value;
+        
+        var queryParams = new URLSearchParams({
+            date_meeting: meetingDate,
+            time_meeting: meetingTime,
+            client_id: client,
+            property_id: property,
+            agent_id: agent,
+            status: status
+        });
+        fetch(`/agency/meeting/${meeting}?${queryParams}`, {
+            method: "PUT"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message === "Meeting updated"){
+                alert("Zaktualizowano dane spotkania");
+                location.reload();
+            } else {
+                alert("Nie udało się zaktualizować danych spotkania " + data.detail);
+            }
+        });
+    });
+
+    document.getElementById("addMeeting").addEventListener("click", function(event){
+        event.preventDefault();
+        var meetingDate = document.getElementById("add_date").value;
+        var meetingTime = document.getElementById("add_time").value;
+        var client = document.getElementById("clientSelect").value;
+        var property = document.getElementById("propertySelect").value;
+        var agent = document.getElementById("agentSelect").value;
+        var status = document.getElementById("statusSelect").value;
+        
+        var queryParams = new URLSearchParams({
+            date_meeting: meetingDate,
+            time_meeting: meetingTime,
+            client_id: client,
+            property_id: property,
+            agent_id: agent,
+            status: status
+        });
+        fetch(`/agency/meeting?${queryParams}`, {
+            method: "POST"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message === "Meeting inserted successfully"){
+                alert("Dodano nowe spotkanie");
+                location.reload();
+            } else {
+                alert("Nie udało się dodać nowego spotkania " + data.detail);
+            }
+        });
+    });
+
+    document.getElementById("deleteMetting").addEventListener("click", function(event){
+        event.preventDefault();
+        var meeting = document.getElementById("meetingSelect").value;
+        if (meeting === ""){
+            alert("Wybierz spotkanie");
+            return;
+        }
+        fetch(`/agency/meeting/${meeting}`, {
+            method: "DELETE"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message == "Meeting deleted successfully"){
+                alert("Usunięto spotkanie");
+                location.reload();
+            } else {
+                alert("Nie udało się usunąć spotkania " + data.detail);
+            }
+        });
+    });
+</script>   
+
+
+{% endblock %}

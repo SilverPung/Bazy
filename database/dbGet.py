@@ -967,4 +967,43 @@ class GetAdvanced(DatabaseConnection):
             return result
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
+        
+    def  get_meetings_with_info(self):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    M.MEETING_ID,
+                    M.CLIENT_ID,
+                    M.AGENT_ID,
+                    M.DATE_MEETING,
+                    M.TIME_MEETING,
+                    M.STATUS,
+                    CU.NAME AS CLIENT_NAME,
+                    CU.SURNAME AS CLIENT_SURNAME,
+                    AU.NAME AS AGENT_NAME,
+                    AU.SURNAME AS AGENT_SURNAME,
+                    P.ADDRESS,
+                    P.CITY
+                FROM 
+                    "Meeting" M
+                JOIN
+                    "Client" C ON M.CLIENT_ID = C.USER_ID
+                JOIN
+                    "Agent" A ON M.AGENT_ID = A.USER_ID
+                JOIN 
+                    "User" CU ON C.USER_ID = CU.USER_ID   
+                JOIN 
+                    "User" AU ON A.USER_ID = AU.USER_ID
+                JOIN 
+                    "Property" P ON M.PROPERTY_ID = P.PROPERTY_ID;
+            """)
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No meetings found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
     
