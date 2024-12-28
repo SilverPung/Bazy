@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Wynajmy{% endblock %}
+{% block content %}
+<div id="rentsFormAdd" class="classblock">
+    <h3> Dodaj Wynajem</h3>
+    <form class="classform" id="addRentsForm">
+        <label for="client">Klient:</label>
+        <select class="selectclass" id="clientSelect">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select class="selectclass" id="propertySelect">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="start_date">Data rozpoczęcia:</label>
+        <input type="date" name="start_date" id="add_start_date"><br>
+        <label for="end_date">Data zakończenia:</label>
+        <input type="date" name="end_date" id="add_end_date"><br>
+        <label for="deposit">Kaucja:</label>
+        <input type="number" name="deposit" id="add_deposit" step="1000"><br>
+        <label for="price">Cena:</label>
+        <input type="number" name="price" id="add_price" step="1000"><br>
+        <label for="status">Status:</label>
+        <select class="selectclass" id="statusSelect">
+            <option value="Pending">Pending</option>
+            <option value="Ended">Ended</option>
+            <option value="Active">Active</option>
+        </select>
+        <button type="submit" id="addRents">Dodaj wynajem</button>
+    </form>
+</div>
+<div id="rentsList" class="classblock">
+    <h3> Wybierz wynajem</h3>
+    <select class="selectclass" id="rentsSelect">
+        <option value="">Wybierz wynajem</option>
+        {% for rent in rents %}
+        <option value="{{ rent.RENT_ID }}">{{rent.CITY}} {{rent.ADDRESS}} {{rent.CLIENT_SURNAME}} {{ rent.START_DATE }}:{{ rent.END_DATE }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div id="rentsFormEdit" class="classblock" style="display: none;">
+    <h3> Edytuj Wynajem</h3>
+    <form class="classform" id="editRentsForm">
+        <label for="client">Klient:</label>
+        <select class="selectclass" id="clientSelectEdit">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select class="selectclass" id="propertySelectEdit">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in all_properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="start_date">Data rozpoczęcia:</label>
+        <input type="date" name="start_date" id="edit_start_date"><br>
+        <label for="end_date">Data zakończenia:</label>
+        <input type="date" name="end_date" id="edit_end_date"><br>
+        <label for="deposit">Kaucja:</label>
+        <input type="number" name="deposit" id="edit_deposit" step="1000"><br>
+        <label for="price">Cena:</label>
+        <input type="number" name="price" id="edit_price" step="1000"><br>
+        <label for="status">Status:</label>
+        <select class="selectclass" id="statusSelectEdit">
+            <option value="Pending">Pending</option>
+            <option value="Ended">Ended</option>
+            <option value="Active">Active</option>
+        </select>
+        <button type="submit" id="editRents">Edytuj wynajem</button>
+    </form>
+    <button id="deleteRents" class="deletebutton">Usuń wynajem</button>
+</div>
+<div id="addictionalRentsInfo" class="classblock" style="display: none;">
+    <h3> Dodatkowe informacje o wynajmie</h3>
+    <div id="rentPayments" class="classblock">
+        <h4> Płatności</h4>
+        <ul id="paymentList">
+        </ul>
+    </div>
+</div>    
+
+
+<script src="/static/rents.js"></script>
+{% endblock %}
+
+
+
