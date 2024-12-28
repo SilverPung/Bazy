@@ -9,11 +9,14 @@
         <label for="repairDate">Data naprawy:</label>
         <input type="date" id="repairDate" name="repairDate">
         <label for="repairStatus">Status naprawy:</label>
-        <input type="text" id="repairStatus" name="repairStatus">
+        <select id="repairStatus" name="repairStatus" class="selectclass">
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Rescheduled">Rescheduled</option>
+        </select>
         <label for="repairDescription">Opis naprawy:</label>
         <input type="text" id="repairDescription" name="repairDescription">
-        <label for="repairCost">Koszt naprawy:</label>
-        <input type="number" id="repairCost" name="repairCost">
         <label for="repairProperty">Nieruchomość:</label>
         <select id="repairProperty" name="repairProperty" class="selectclass">
             <option value="">Wybierz nieruchomość</option>
@@ -41,7 +44,12 @@
         <label for="repairDate">Data naprawy:</label>
         <input type="date" id="repairDateEdit" name="repairDate">
         <label for="repairStatus">Status naprawy:</label>
-        <input type="text" id="repairStatusEdit" name="repairStatus">
+        <select id="repairStatusEdit" name="repairStatus" class="selectclass">
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Rescheduled">Rescheduled</option>
+        </select>
         <label for="repairDescription">Opis naprawy:</label>
         <input type="text" id="repairDescriptionEdit" name="repairDescription">
         <label for="repairProperty">Nieruchomość:</label>

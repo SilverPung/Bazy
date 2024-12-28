@@ -194,3 +194,7 @@ def get_repairs_with_property():
 @router.get("/agency/repair_with_property/{repair_id}", tags=["GetAdvanced"])
 def get_repair_with_property(repair_id: int):
     return GetAdvanced.get_repair_with_property(repair_id)
+
+@router.get("/agency/sales_with_info", tags=["GetAdvanced"])
+def get_sales_with_info():
+    return GetAdvanced.get_sales_with_info()

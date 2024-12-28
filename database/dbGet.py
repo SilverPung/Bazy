@@ -927,4 +927,44 @@ class GetAdvanced(DatabaseConnection):
             return result
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
+        
+
+    def get_sales_with_info(self):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    S.SALE_ID,
+                    S.PROPERTY_ID,
+                    S.CLIENT_ID,
+                    S.AGENT_ID,
+                    S.SALE_DATE,
+                    S.STATUS,
+                    P.ADDRESS,
+                    P.CITY,
+                    CU.NAME AS CLIENT_NAME,
+                    CU.SURNAME AS CLIENT_SURNAME,
+                    AU.NAME AS AGENT_NAME,
+                    AU.SURNAME AS AGENT_SURNAME
+                FROM 
+                    "Sales" S
+                JOIN
+                    "Property" P ON S.PROPERTY_ID = P.PROPERTY_ID
+                JOIN
+                    "Client" C ON S.CLIENT_ID = C.USER_ID
+                JOIN
+                    "Agent" A ON S.AGENT_ID = A.USER_ID
+                JOIN 
+                    "User" CU ON C.USER_ID = CU.USER_ID   
+                JOIN 
+                    "User" AU ON A.USER_ID = AU.USER_ID;
+            """)
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No sales found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
     
