@@ -851,6 +851,31 @@ class GetAdvanced(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-
+    def get_rent_with_payments(self,rent_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    R.RENT_ID,
+                    P.PAYMENT_ID,
+                    P.AMOUNT,
+                    P.PAYMENT_DATE,
+                    P.STATUS,
+                    P.METHOD
+                FROM 
+                    "Rents" R
+                JOIN
+                    "Payment" P ON R.RENT_ID = P.RENT_ID
+                WHERE R.RENT_ID = ?
+                ORDER BY P.PAYMENT_DATE DESC, R.RENT_ID;
+            """,(rent_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No payments found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 

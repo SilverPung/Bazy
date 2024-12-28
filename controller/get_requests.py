@@ -234,3 +234,7 @@ def get_property_with_rents(property_id: int):
 @router.get("/agency/property/{property_id}/meetings", tags=["GetAdvanced"])
 def get_property_with_meetings(property_id: int):
     return GetAdvanced.get_property_with_meetings(property_id)
+
+@router.get("/agency/rents/{rent_id}/payments", tags=["GetAdvanced"])
+def get_rent_with_payments(rent_id: int):
+    return GetAdvanced.get_rent_with_payments(rent_id)
