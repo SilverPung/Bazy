@@ -110,7 +110,7 @@ class UpdateOne(DatabaseConnection):
                 UPDATE "Rents"
                 SET START_DATE = ?, END_DATE = ?, DEPOSIT = ?, STATUS = ?, CLIENT_ID = ?, PROPERTY_ID = ?, PRICE = ?
                 WHERE RENT_ID = ?
-            ''', (start_date, end_date, deposit, status, client_id, property_id, rent_id, price))
+            ''', (start_date, end_date, deposit, status, client_id, property_id,price, rent_id))
             self.commit()
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))

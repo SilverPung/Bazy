@@ -75,7 +75,7 @@ async def repairs(request: Request):
 
 @router.get("/webpage/rents", response_class=HTMLResponse)
 async def rents(request: Request):
-    rents = get_advanced.get_rent_with_info()
+    rents = get_advanced.get_rents_with_info()
     clients = get_all.get_client()
     properties = get_advanced.get_property_not_sold_or_rented()
     all_properties = get_all.get_property()
