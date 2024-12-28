@@ -46,8 +46,8 @@ def update_property(property_id: int, address: str, city: str, state: str, posta
     return {"message": "Property updated"}
 
 @router.put("/agency/rent/{rent_id}")
-def update_rent(rent_id: int, start_date: str, end_date: str, deposit: float, status: str, client_id: int, property_id: int):
-    UpdateOne.update_rent(rent_id, start_date, end_date, deposit, status, client_id, property_id)
+def update_rent(rent_id: int, start_date: str, end_date: str, price: int ,deposit: float, status: str, client_id: int, property_id: int):
+    UpdateOne.update_rent(rent_id, start_date, end_date, price, deposit, status, client_id, property_id)
     return {"message": "Rent updated"}
 
 @router.put("/agency/repair/{repair_id}")

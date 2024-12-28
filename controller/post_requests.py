@@ -58,12 +58,12 @@ def insert_payment(amount: float, payment_date: str, status: str, method: str, r
     return {"message": "Payment inserted successfully"}
 
 @router.post("/agency/rent", summary="Insert a new rent", description="Status can be 'Pending', 'Ended', 'Active'.")
-def insert_rent(start_date: str, end_date: str, deposit: float, status: str, client_id: int, property_id: int):
+def insert_rent(start_date: str, end_date: str, price:int,deposit: float, status: str, client_id: int, property_id: int):
     """
     Insert a new rent.
     Status can be 'Pending', 'Ended', 'Active'.
     """
-    InsertOne.insert_rent(start_date, end_date, deposit, status, client_id, property_id)
+    InsertOne.insert_rent(start_date, end_date, price, deposit, status, client_id, property_id)
     return {"message": "Rent inserted successfully"}
 
 @router.post("/agency/repair", summary="Insert a new repair", description="Status can be 'Pending', 'In Progress', 'Completed', 'Rescheduled'.")

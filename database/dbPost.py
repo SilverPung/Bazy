@@ -94,13 +94,13 @@ class InsertOne(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    def insert_rent(self, start_date, end_date, deposit, status, client_id, property_id):
+    def insert_rent(self, start_date, end_date, price, deposit, status, client_id, property_id):
         try:
             cursor = self.get_cursor()
             cursor.execute('''
-                INSERT INTO "Rents" (START_DATE, END_DATE, DEPOSIT, STATUS, CLIENT_ID, PROPERTY_ID)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (start_date, end_date, deposit, status, client_id, property_id))
+                INSERT INTO "Rents" (START_DATE, END_DATE, DEPOSIT, STATUS, CLIENT_ID, PROPERTY_ID, PRICE)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (start_date, end_date, deposit, status, client_id, property_id,price))
             self.commit()
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))

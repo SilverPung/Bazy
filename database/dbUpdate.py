@@ -103,14 +103,14 @@ class UpdateOne(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-    def update_rent(self, rent_id, start_date, end_date, deposit, status, client_id, property_id):
+    def update_rent(self, rent_id, start_date, end_date, price, deposit, status, client_id, property_id):
         try:
             cursor = self.get_cursor()
             cursor.execute('''
                 UPDATE "Rents"
-                SET START_DATE = ?, END_DATE = ?, DEPOSIT = ?, STATUS = ?, CLIENT_ID = ?, PROPERTY_ID = ?
+                SET START_DATE = ?, END_DATE = ?, DEPOSIT = ?, STATUS = ?, CLIENT_ID = ?, PROPERTY_ID = ?, PRICE = ?
                 WHERE RENT_ID = ?
-            ''', (start_date, end_date, deposit, status, client_id, property_id, rent_id))
+            ''', (start_date, end_date, deposit, status, client_id, property_id, rent_id, price))
             self.commit()
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
