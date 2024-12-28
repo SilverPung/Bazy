@@ -48,7 +48,8 @@ async def meetings(request: Request):
 async def sales(request: Request):
     sales = get_advanced.get_sales_with_info()
     clients = get_all.get_client()
-    properties = get_all.get_property()
+    properties = get_advanced.get_property_not_sold_or_rented()
+    all_properties = get_all.get_property()
     agents = get_all.get_agent()
     if not clients:
         raise HTTPException(status_code=404, detail="No clients found")
@@ -58,7 +59,7 @@ async def sales(request: Request):
         raise HTTPException(status_code=404, detail="No agents found")
     if not sales:
         raise HTTPException(status_code=404, detail="No sales found")
-    return templates.TemplateResponse("sales.html", {"request": request, "sales": sales, "clients": clients, "properties": properties, "agents": agents})
+    return templates.TemplateResponse("sales.html", {"request": request, "sales": sales, "clients": clients, "properties": properties, "agents": agents, "all_properties": all_properties})
 
 @router.get("/webpage/repairs", response_class=HTMLResponse)
 async def repairs(request: Request):

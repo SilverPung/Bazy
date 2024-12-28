@@ -62,7 +62,7 @@
         <label for="property">Nieruchomość:</label>
         <select id="propertySelectEdit" class="selectclass">
             <option value="">Wybierz nieruchomość</option>
-            {% for property in properties %}
+            {% for property in all_properties %}
             <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
             {% endfor %}
         </select>

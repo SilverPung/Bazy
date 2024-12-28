@@ -11,8 +11,8 @@ cur = con.cursor()
 
 try:
     cur.execute("""
-        SELECT RDB$PROCEDURE_NAME
-        FROM RDB$PROCEDURES
+        SELECT RDB$TRIGGER_NAME
+        FROM RDB$TRIGGERS
 
     """)
     for row in cur.fetchall():

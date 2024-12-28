@@ -319,7 +319,8 @@ class GetAdvanced(DatabaseConnection):
                     FROM "Rents" R
                     WHERE P.PROPERTY_ID = R.PROPERTY_ID
                     AND R.STATUS IN ('Pending', 'Active')
-                );
+                )
+                ORDER BY P.CITY, P.ADDRESS;
             """)
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -534,7 +535,8 @@ class GetAdvanced(DatabaseConnection):
                 JOIN 
                     "User" CU ON C.USER_ID = CU.USER_ID   
                 JOIN 
-                    "User" AU ON A.USER_ID = AU.USER_ID;
+                    "User" AU ON A.USER_ID = AU.USER_ID
+                ORDER BY P.CITY, P.ADDRESS, AU.SURNAME, AU.NAME;
             """)
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -545,7 +547,7 @@ class GetAdvanced(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
         
-    def  get_meetings_with_info(self):
+    def get_meetings_with_info(self):
         try:
             cursor = self.get_cursor()
             cursor.execute("""
@@ -573,7 +575,8 @@ class GetAdvanced(DatabaseConnection):
                 JOIN 
                     "User" AU ON A.USER_ID = AU.USER_ID
                 JOIN 
-                    "Property" P ON M.PROPERTY_ID = P.PROPERTY_ID;
+                    "Property" P ON M.PROPERTY_ID = P.PROPERTY_ID
+                ORDER BY P.CITY, P.ADDRESS, AU.SURNAME, AU.NAME;
             """)
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -609,7 +612,8 @@ class GetAdvanced(DatabaseConnection):
                     "User" A ON S.AGENT_ID = A.USER_ID
                 JOIN
                     "Property" P ON S.PROPERTY_ID = P.PROPERTY_ID
-                WHERE C.USER_ID = ?;
+                WHERE C.USER_ID = ?
+            ORDER BY S.SALE_DATE DESC, P.CITY, P.ADDRESS;
             """,(client_id,))
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -644,7 +648,8 @@ class GetAdvanced(DatabaseConnection):
                     "User" A ON M.AGENT_ID = A.USER_ID
                 JOIN
                     "Property" P ON M.PROPERTY_ID = P.PROPERTY_ID
-                WHERE C.USER_ID = ?;
+                WHERE C.USER_ID = ?
+            ORDER BY M.DATE_MEETING DESC, M.TIME_MEETING, P.CITY, P.ADDRESS;
             """,(client_id,))
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
@@ -676,7 +681,9 @@ class GetAdvanced(DatabaseConnection):
                     "Rents" R ON C.USER_ID = R.CLIENT_ID
                 JOIN
                     "Property" P ON R.PROPERTY_ID = P.PROPERTY_ID
-                WHERE C.USER_ID = ?;
+                WHERE C.USER_ID = ?
+            ORDER BY R.START_DATE DESC, P.CITY, P.ADDRESS;
+                           
             """,(client_id,))
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()

@@ -6,7 +6,7 @@ class GetAll(DatabaseConnection):
     def get_property(self):
         try:
             cursor = self.get_cursor()
-            cursor.execute('SELECT * FROM "Property"')
+            cursor.execute('SELECT * FROM "Property" ORDER BY STATE,CITY,ADDRESS')
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
 
