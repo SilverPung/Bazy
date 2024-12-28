@@ -586,7 +586,45 @@ class GetAdvanced(DatabaseConnection):
             return result
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
-    
+
+    def get_rents_with_info(self):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    R.RENT_ID,
+                    R.PROPERTY_ID,
+                    R.CLIENT_ID,
+                    R.START_DATE,
+                    R.END_DATE,
+                    R.DEPOSIT,
+                    R.STATUS,
+                    P.ADDRESS,
+                    P.CITY,
+                    CU.NAME AS CLIENT_NAME,
+                    CU.SURNAME AS CLIENT_SURNAME
+                FROM 
+                    "Rents" R
+                JOIN
+                    "Property" P ON R.PROPERTY_ID = P.PROPERTY_ID
+                JOIN
+                    "Client" C ON R.CLIENT_ID = C.USER_ID
+                JOIN 
+                    "User" CU ON C.USER_ID = CU.USER_ID   
+                ORDER BY P.CITY, P.ADDRESS, CU.SURNAME, CU.NAME;
+            """)
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No rents found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
     def get_client_with_sales(self,client_id):
         try:
             cursor = self.get_cursor()

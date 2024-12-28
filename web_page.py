@@ -71,3 +71,21 @@ async def repairs(request: Request):
         raise HTTPException(status_code=404, detail="No properties found")
     
     return templates.TemplateResponse("repairs.html", {"request": request, "repairs": repairs, "properties": properties})
+
+
+@router.get("/webpage/rents", response_class=HTMLResponse)
+async def rents(request: Request):
+    rents = get_advanced.get_rent_with_info()
+    clients = get_all.get_client()
+    properties = get_advanced.get_property_not_sold_or_rented()
+    all_properties = get_all.get_property()
+    agents = get_all.get_agent()
+    if not clients:
+        raise HTTPException(status_code=404, detail="No clients found")
+    if not properties:
+        raise HTTPException(status_code=404, detail="No properties found")
+    if not agents:
+        raise HTTPException(status_code=404, detail="No agents found")
+    if not rents:
+        raise HTTPException(status_code=404, detail="No rents found")
+    return templates.TemplateResponse("rents.html", {"request": request, "rents": rents, "clients": clients, "properties": properties, "agents": agents, "all_properties": all_properties})

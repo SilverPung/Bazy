@@ -42,7 +42,6 @@ document.getElementById('propertySelect').addEventListener('change', function() 
             });
         });
 
-
     fetch(`/agency/property/${propertyId}/sales`)   
     .then(response => response.json())
     .then(data => {
@@ -82,7 +81,7 @@ document.getElementById('propertySelect').addEventListener('change', function() 
             rentsList.appendChild(rentItem);
         });
     });
-    
+
     fetch(`/agency/property/${propertyId}/meetings`)
     .then(response => response.json())
     .then(data => {
