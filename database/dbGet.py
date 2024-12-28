@@ -287,7 +287,7 @@ class GetOne(DatabaseConnection):
     def get_sell(self, sell_id: int):
         try:
             cursor = self.get_cursor()
-            cursor.execute('SELECT * FROM "Sales" WHERE SELL_ID = ?', (sell_id,))
+            cursor.execute('SELECT * FROM "Sales" WHERE SALE_ID = ?', (sell_id,))
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
             if not rows:

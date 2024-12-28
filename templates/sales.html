@@ -1,1 +1,198 @@
 {% extends 'base.html' %}
+
+{% block title %}Sprzedaże{% endblock %}
+
+{% block content %}
+<div id="salesFormAdd" class="classblock">
+    <h3> Dodaj Sprzedaż</h3>
+    <form id="addSalesForm" class="classform">
+        <label for="client">Klient:</label>
+        <select id="clientSelect" class="selectclass">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select id="propertySelect" class="selectclass">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="agent">Agent:</label>
+        <select id="agentSelect" class="selectclass">
+            <option value="">Wybierz agenta</option>
+            {% for agent in agents %}
+            <option value="{{ agent.USER_ID }}">{{ agent.NAME }} {{ agent.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Data:</label>
+        <input type="date" id="add_date" name="date"><br>
+        <label for="price">Cena:</label>
+        <input type="number" id="add_price" name="price" step="1000"><br>
+        <label for="status">Status:</label>
+        <select id="statusSelect" class="selectclass">
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+        <button id="addSales" type="submit">Dodaj sprzedaż</button>
+    </form>
+</div>
+<div id="salesList" class="classblock">
+    <h3> Edytuj wybraną sprzedaż</h3>
+    <select id="salesSelect" class="selectclass">
+        <option value="">Wybierz sprzedaż</option>
+        {% for sale in sales %}
+        <option value="{{ sale.SALE_ID }}">{{sale.CITY}} {{sale.ADDRESS}} {{sale.AGENT_SURNAME}} --> {{sale.CLIENT_SURNAME}} {{ sale.SALE_DATE }}</option>
+        {% endfor %}
+    </select>
+
+<div id="salesFormEdit" class="classblock" style="display: none;">
+    <h3> Edytuj Sprzedaż</h3>
+    <form id="editSalesForm" class="classform">
+        <label for="client">Klient:</label>
+        <select id="clientSelectEdit" class="selectclass">
+            <option value="">Wybierz klienta</option>
+            {% for client in clients %}
+            <option value="{{ client.USER_ID }}">{{ client.NAME }} {{ client.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="property">Nieruchomość:</label>
+        <select id="propertySelectEdit" class="selectclass">
+            <option value="">Wybierz nieruchomość</option>
+            {% for property in properties %}
+            <option value="{{ property.PROPERTY_ID }}">{{ property.CITY }} {{ property.ADDRESS }} {{ property.POSTAL_CODE }}</option>
+            {% endfor %}
+        </select>
+        <label for="agent">Agent:</label>
+        <select id="agentSelectEdit" class="selectclass">
+            <option value="">Wybierz agenta</option>
+            {% for agent in agents %}
+            <option value="{{ agent.USER_ID }}">{{ agent.NAME }} {{ agent.SURNAME }}</option>
+            {% endfor %}
+        </select>
+        <label for="date">Data:</label>
+        <input type="date" id="edit_date" name="date"><br>
+        <label for="price">Cena:</label>
+        <input type="number" id="edit_price" name="price" step="1000"><br>
+        <label for="status">Status:</label>
+        <select id="statusSelectEdit" class="selectclass">
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+        <button id="editSales" type="submit">Edytuj sprzedaż</button>
+    </form>
+    <button id="deleteSales" class="deletebutton">Usuń Sprzedaż</button>
+</div>
+<script>
+    document.getElementById("salesSelect").addEventListener("change", function(event){
+        var sale = document.getElementById("salesSelect").value;
+        if (sale === ""){
+            document.getElementById("salesFormEdit").style.display = "none";
+            console.log("No sale selected");
+            return;
+        }
+        fetch(`/agency/sale/${sale}`, {
+            method: "GET"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            data = data[0];
+            document.getElementById("edit_date").value = data.SALE_DATE;
+            document.getElementById("edit_price").value = data.PRICE;
+            document.getElementById("clientSelectEdit").value = data.CLIENT_ID;
+            document.getElementById("propertySelectEdit").value = data.PROPERTY_ID;
+            document.getElementById("agentSelectEdit").value = data.AGENT_ID;
+            document.getElementById("statusSelectEdit").value = data.STATUS;
+            document.getElementById("salesFormEdit").style.display = "block";
+        });
+    });
+
+    document.getElementById("editSales").addEventListener("click", function(event){
+        event.preventDefault();
+        var sale = document.getElementById("salesSelect").value;
+        var saleDate = document.getElementById("edit_date").value;
+        var salePrice = document.getElementById("edit_price").value;
+        var client = document.getElementById("clientSelectEdit").value;
+        var property = document.getElementById("propertySelectEdit").value;
+        var agent = document.getElementById("agentSelectEdit").value;
+        var status = document.getElementById("statusSelectEdit").value;
+        
+        var queryParams = new URLSearchParams({
+            sale_date: saleDate,
+            price: salePrice,
+            client_id: client,
+            property_id: property,
+            agent_id: agent,
+            status: status
+        });
+        fetch(`/agency/sale/${sale}?${queryParams}`, {
+            method: "PUT"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message === "Sale updated"){
+                alert("Zaktualizowano dane sprzedaży");
+                location.reload();
+            } else {
+                alert("Nie udało się zaktualizować danych sprzedaży " + data.detail);
+            }
+        });
+    });
+
+    document.getElementById("addSales").addEventListener("click", function(event){
+        event.preventDefault();
+        var saleDate = document.getElementById("add_date").value;
+        var salePrice = document.getElementById("add_price").value;
+        var client = document.getElementById("clientSelect").value;
+        var property = document.getElementById("propertySelect").value;
+        var agent = document.getElementById("agentSelect").value;
+        var status = document.getElementById("statusSelect").value;
+        
+        var queryParams = new URLSearchParams({
+            sale_date: saleDate,
+            price: salePrice,
+            client_id: client,
+            property_id: property,
+            agent_id: agent,
+            status: status
+        });
+        fetch(`/agency/sale?${queryParams}`, {
+            method: "POST"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message === "Sale inserted successfully"){
+                alert("Dodano nową sprzedaż");
+                location.reload();
+            } else {
+                alert("Nie udało się dodać nowej sprzedaży " + data.detail);
+            }
+        });
+    });
+
+    document.getElementById("deleteSales").addEventListener("click", function(event){
+        event.preventDefault();
+        var sale = document.getElementById("salesSelect").value;
+        if (sale === ""){
+            alert("Wybierz sprzedaż");
+            return;
+        }
+        fetch(`/agency/sale/${sale}`, {
+            method: "DELETE"
+        }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if(data.message == "Sale deleted successfully"){
+                alert("Usunięto sprzedaż");
+                location.reload();
+            } else {
+                alert("Nie udało się usunąć sprzedaży " + data.detail);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -46,7 +46,7 @@
     <select id="meetingSelect" class="selectclass">
         <option value="">Wybierz spotkanie</option>
         {% for meeting in meetings %}
-        <option value="{{ meeting.MEETING_ID }}">{{meeting.city}} {{meeting.ADDRESS}} {{meeting.AGENT_SURNAME}} --> {{meeting.CLIENT_SURNAME}} {{ meeting.DATE_MEETING }} {{ meeting.TIME_MEETING }}</option>
+        <option value="{{ meeting.MEETING_ID }}">{{meeting.CITY}} {{meeting.ADDRESS}} {{meeting.AGENT_SURNAME}} --> {{meeting.CLIENT_SURNAME}} {{ meeting.DATE_MEETING }} {{ meeting.TIME_MEETING }}</option>
         {% endfor %}
     </select>
 
