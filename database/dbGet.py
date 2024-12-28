@@ -1007,3 +1007,106 @@ class GetAdvanced(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
     
+    def get_client_with_sales(self,client_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    C.USER_ID,
+                    S.SALE_ID,
+                    S.PROPERTY_ID,
+                    S.AGENT_ID,
+                    A.NAME AS AGENT_NAME,
+                    A.SURNAME AS AGENT_SURNAME,
+                    S.SALE_DATE,
+                    S.STATUS,
+                    S.PRICE,
+                    P.ADDRESS,
+                    P.CITY,
+                    P.STATE
+                FROM 
+                    "Client" C
+                JOIN
+                    "Sales" S ON C.USER_ID = S.CLIENT_ID
+                JOIN
+                    "User" A ON S.AGENT_ID = A.USER_ID
+                JOIN
+                    "Property" P ON S.PROPERTY_ID = P.PROPERTY_ID
+                WHERE C.USER_ID = ?;
+            """,(client_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No sales found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    
+    def get_client_with_meetings(self,client_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    C.USER_ID,
+                    M.MEETING_ID,
+                    M.AGENT_ID,
+                    A.NAME AS AGENT_NAME,
+                    A.SURNAME AS AGENT_SURNAME,
+                    M.DATE_MEETING,
+                    M.TIME_MEETING,
+                    M.STATUS,
+                    P.ADDRESS,
+                    P.CITY,
+                    P.STATE
+                FROM 
+                    "Client" C
+                JOIN
+                    "Meeting" M ON C.USER_ID = M.CLIENT_ID
+                JOIN
+                    "User" A ON M.AGENT_ID = A.USER_ID
+                JOIN
+                    "Property" P ON M.PROPERTY_ID = P.PROPERTY_ID
+                WHERE C.USER_ID = ?;
+            """,(client_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No meetings found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+            
+    def get_client_with_rents(self,client_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    C.USER_ID,
+                    R.RENT_ID,
+                    R.PROPERTY_ID,
+                    R.START_DATE,
+                    R.END_DATE,
+                    R.DEPOSIT,
+                    R.STATUS,
+                    P.ADDRESS,
+                    P.CITY,
+                    P.STATE
+                FROM 
+                    "Client" C
+                JOIN
+                    "Rents" R ON C.USER_ID = R.CLIENT_ID
+                JOIN
+                    "Property" P ON R.PROPERTY_ID = P.PROPERTY_ID
+                WHERE C.USER_ID = ?;
+            """,(client_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No rents found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    
