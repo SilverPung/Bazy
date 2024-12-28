@@ -217,3 +217,20 @@ def get_client_with_meetings(client_id: int):
 @router.get("/agency/client/{client_id}/rents", tags=["GetAdvanced"])
 def get_client_with_rents(client_id: int):
     return GetAdvanced.get_client_with_rents(client_id)
+
+
+@router.get("/agency/property/{property_id}/repairs", tags=["GetAdvanced"])
+def get_property_with_repairs(property_id: int):
+    return GetAdvanced.get_property_with_repairs(property_id)
+
+@router.get("/agency/property/{property_id}/sales", tags=["GetAdvanced"])
+def get_property_with_sales(property_id: int):
+    return GetAdvanced.get_property_with_sales(property_id)
+
+@router.get("/agency/property/{property_id}/rents", tags=["GetAdvanced"])
+def get_property_with_rents(property_id: int):
+    return GetAdvanced.get_property_with_rents(property_id)
+
+@router.get("/agency/property/{property_id}/meetings", tags=["GetAdvanced"])
+def get_property_with_meetings(property_id: int):
+    return GetAdvanced.get_property_with_meetings(property_id)

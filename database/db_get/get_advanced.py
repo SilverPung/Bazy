@@ -661,6 +661,7 @@ class GetAdvanced(DatabaseConnection):
             raise HTTPException(status_code=500, detail=str(e))
             
     def get_client_with_rents(self,client_id):
+
         try:
             cursor = self.get_cursor()
             cursor.execute("""
@@ -693,3 +694,125 @@ class GetAdvanced(DatabaseConnection):
             return result
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
+        
+
+    def get_property_with_repairs(self,property_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    P.PROPERTY_ID,
+                    R.REPAIR_ID,
+                    R.DESCRIPTION,
+                    R.STATUS,
+                    R.REPAIR_DATE
+                FROM 
+                    "Property" P
+                JOIN
+                    "Repairs" R ON P.PROPERTY_ID = R.PROPERTY_ID
+                WHERE P.PROPERTY_ID = ?
+                ORDER BY R.REPAIR_DATE DESC;
+                           
+            """,(property_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No repairs found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    def get_property_with_sales(self,property_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    P.PROPERTY_ID,
+                    S.SALE_ID,
+                    S.CLIENT_ID,
+                    S.AGENT_ID,
+                    S.SALE_DATE,
+                    S.STATUS
+                FROM 
+                    "Property" P
+                JOIN
+                    "Sales" S ON P.PROPERTY_ID = S.PROPERTY_ID
+                WHERE P.PROPERTY_ID = ?
+                ORDER BY S.SALE_DATE DESC;
+            """,(property_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No sales found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    def get_property_with_rents(self,property_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    P.PROPERTY_ID,
+                    R.RENT_ID,
+                    R.CLIENT_ID,
+                    R.START_DATE,
+                    R.END_DATE,
+                    R.STATUS
+                FROM 
+                    "Property" P
+                JOIN
+                    "Rents" R ON P.PROPERTY_ID = R.PROPERTY_ID
+                WHERE P.PROPERTY_ID = ?
+                ORDER BY R.START_DATE DESC;
+            """,(property_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No rents found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    def get_property_with_meetings(self,property_id):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute("""
+                SELECT 
+                    P.PROPERTY_ID,
+                    M.MEETING_ID,
+                    M.CLIENT_ID,
+                    M.AGENT_ID,
+                    M.DATE_MEETING,
+                    M.TIME_MEETING,
+                    U.NAME AS CLIENT_NAME,
+                    U.SURNAME AS CLIENT_SURNAME,
+                    A.NAME AS AGENT_NAME,
+                    A.SURNAME AS AGENT_SURNAME,
+                    M.STATUS
+                FROM 
+                    "Property" P
+                JOIN
+                    "Meeting" M ON P.PROPERTY_ID = M.PROPERTY_ID
+                JOIN
+                    "User" U ON M.CLIENT_ID = U.USER_ID
+                JOIN
+                    "User" A ON M.AGENT_ID = A.USER_ID
+                WHERE P.PROPERTY_ID = ?
+                ORDER BY M.DATE_MEETING DESC, M.TIME_MEETING;
+            """,(property_id,))
+            colums = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            if not rows:
+                raise HTTPException(status_code=404, detail="No meetings found")
+            result = [dict(zip(colums, row)) for row in rows]
+            return result
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
