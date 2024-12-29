@@ -3,3 +3,5 @@ And created query to drop the subclass of the user
 create trigger and exceptions for ManagerAgent and Review and for the rest of the tables
 
 change property_id in meeting from possible to null to not null in docs
+
+addd CRUD to phone numbers to the clients

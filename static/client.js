@@ -154,7 +154,30 @@ document.getElementById("clientSelect").addEventListener("change", function(even
         });
     });
 
+    fetch(`/agency/tel_number/${user}`, {
+        method: "GET"
+    }).then(response => response.json())
+    .then(data => {
+        //console.log(data);
+        var phoneNumbersList = document.getElementById("clientPhoneNumbers").getElementsByTagName("ul")[0];
+        phoneNumbersList.innerHTML = "";
+        if(data.detail === "No phone numbers found"){
+            var phoneItem = document.createElement("li");
+            phoneItem.innerHTML = "Brak numerów telefonu";
+            phoneNumbersList.appendChild(phoneItem);
+            return;
+        }
+        data.forEach(phone => {
+            var phoneItem = document.createElement("li");
+            phoneItem.innerHTML =`<span class="phone-item">${phone.TEL_NUMBER}<button id="Delete${phone.TEL_NUMBER}" class="smalldeletebutton">Usuń numer</button></span>`;
+            phoneNumbersList.appendChild(phoneItem);
+        });
+    });
+
+
+    document.getElementById("clientPhoneNumbers").style.display = "block";
     document.getElementById("additionalClientInfo").style.display = "block";
+    
     
 });
 

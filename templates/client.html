@@ -75,6 +75,24 @@
     </form>
     <button id="disconnectClient" class="deletebutton" >Odłącz klienta</button>
 </div>
+
+<div id="clientPhoneNumbers" class="classblock" style="display: none;">
+    <h3>Edytuj numery telefonów</h3>
+    <div id="clientPhoneNumbersList" class="classblock">
+        <h4>Telefony</h4>
+        <ul>
+        </ul>
+    </div>
+    <div id="clientPhoneNumberForm" class="classblock">
+        <h4>Dodaj numer telefonu</h4>
+        <form id="addPhoneNumberForm" class="classform">
+            <label for="phone">Numer telefonu:</label>
+            <input type="text" id="add_phone" name="phone"><br>
+            <button type="submit">Dodaj numer telefonu</button>
+        </form>
+    </div>
+</div>
+
 <div id="additionalClientInfo" class="classblock" style="display: none;">
     <h3>Dodatkowe informacje</h3>
     <div id="clientSales" class="classblock">
@@ -93,6 +111,7 @@
         </ul>
     </div>
 </div>
+
 
 <script src="/static/client.js"></script>
 {% endblock %}
