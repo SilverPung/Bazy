@@ -130,10 +130,10 @@ class GetOne(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
     
-    def get_tel_number(self, tel_number_id: int):
+    def get_tel_number(self, user_id: int):
         try:
             cursor = self.get_cursor()
-            cursor.execute('SELECT * FROM "Tel_number" WHERE USER_ID=?', (tel_number_id,))
+            cursor.execute('SELECT * FROM "Tel_number" WHERE USER_ID=?', (user_id,))
             colums = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
             if not rows:

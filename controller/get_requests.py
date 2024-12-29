@@ -87,9 +87,9 @@ def get_rent_by_id(rent_id: int):
 def get_payment_by_id(payment_id: int):
     return GetOne.get_payment(payment_id)
 
-@router.get("/agency/tel_number/{tel_number_id}", tags=["GetOne"])
-def get_tel_number_by_id(tel_number_id: int):
-    return GetOne.get_tel_number(tel_number_id)
+@router.get("/agency/tel_number/{user_id}", tags=["GetOne"])
+def get_tel_number_by_id(user_id: int):
+    return GetOne.get_tel_number(user_id)
 
 @router.get("/agency/review/{review_id}", tags=["GetOne"])
 def get_review_by_id(review_id: int):

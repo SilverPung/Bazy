@@ -64,7 +64,7 @@ def delete_sale(sale_id: int):
     DeleteOne.delete_sale(sale_id)
     return {"message": "Sale deleted successfully"}
 
-@router.delete("/agency/tel_number/{user_id}/{tel_number}")
+@router.delete("/agency/tel_number")
 def delete_tel_number(user_id: int, tel_number: str):
     DeleteOne.delete_tel_number(user_id, tel_number)
     return {"message": "Telephone number deleted successfully"}
