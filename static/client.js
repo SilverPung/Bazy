@@ -234,3 +234,54 @@ document.getElementById("disconnectClient").addEventListener("click", function(e
         }
     });
 });
+
+document.getElementById("addPhoneNumber").addEventListener("click", function(event){
+    event.preventDefault();
+    var user = document.getElementById("clientSelect").value;
+    var tel_number = document.getElementById("add_tel_number").value;
+    if (user === "" || tel_number === ""){
+        alert("Wypełnij wszystkie pola");
+        return;
+    }
+    var queryParams = new URLSearchParams({
+        user_id: user,
+
+        tel_number: tel_number
+    })
+    fetch(`/agency/tel_number?${queryParams}`, {
+        method: "POST"
+    }).then(response => response.json())
+    .then(data => {
+        //console.log(data);
+        if(data.message === "Telephone number inserted successfully"){
+            alert("Dodano numer telefonu");
+            location.reload();
+        } else {
+            alert("Nie udało się dodać numeru telefonu "+ data.detail);
+        }
+    });
+});
+
+document.getElementById("clientPhoneNumbers").addEventListener("click", function(event){
+    if(event.target.className === "smalldeletebutton"){
+        var user = document.getElementById("clientSelect").value;
+        var tel_number = event.target.id.slice(6);
+        var queryParams = new URLSearchParams({
+            user_id: user,
+            tel_number: tel_number
+        })
+
+        fetch(`/agency/tel_number?${queryParams}`, {
+            method: "DELETE"
+        }).then(response => response.json())
+        .then(data => {
+            //console.log(data);
+            if(data.message == "Telephone number deleted successfully"){
+                alert("Usunięto numer telefonu");
+                location.reload();
+            } else {
+                alert("Nie udało się usunąć numeru telefonu "+ data.detail);
+            }
+        });
+    }
+});
