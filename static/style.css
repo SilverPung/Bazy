@@ -83,18 +83,6 @@
     border-radius: 4px;
     box-sizing: border-box;
 }
-.classform button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.classform button:hover {
-    background-color: #45a049;
-}
 
 .deletebutton {
     background-color: #f44336;
@@ -109,7 +97,7 @@
     background-color: #e23c31;
 }
 
-.classform button {
+.submitbutton {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -118,7 +106,7 @@
     cursor: pointer;
 }
 
-.classform button:hover {
+.submitbutton:hover {
     background-color: #45a049;
 }
 
@@ -170,3 +158,23 @@ span {
     
 }
 
+.titlename {
+    font-size: 3em;
+    color: #333;
+    margin-top: 10;
+    text-align: center;
+
+}
+
+.classform button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.classform button:hover {
+    background-color: #45a049;
+}

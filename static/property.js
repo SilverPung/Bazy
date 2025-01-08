@@ -4,10 +4,11 @@ document.getElementById('propertySelect').addEventListener('change', function() 
         document.getElementById('propertyFormEdit').style.display = 'none';
         return;
     }
-        // Fetch property details using AJAX or similar method
+        // Basic property info
     fetch(`/agency/property/${propertyId}`)
         .then(response => response.json())
         .then(data => {
+            console.log(data[0]);
             data = data[0];
             document.getElementById('address').value = data.ADDRESS;
             document.getElementById('city').value = data.CITY;
@@ -20,8 +21,10 @@ document.getElementById('propertySelect').addEventListener('change', function() 
             document.getElementById('type').value = data.TYPE;
             document.getElementById('description').value = data.DESCRIPTION;
             document.getElementById('propertyFormEdit').style.display = 'block';
+            document.getElementById('status').value = data.STATUS;
         });
 
+        // Repairs
     fetch(`/agency/property/${propertyId}/repairs`)
         .then(response => response.json())
         .then(data => {
@@ -42,6 +45,7 @@ document.getElementById('propertySelect').addEventListener('change', function() 
             });
         });
 
+        //Sales
     fetch(`/agency/property/${propertyId}/sales`)   
     .then(response => response.json())
     .then(data => {
@@ -62,6 +66,7 @@ document.getElementById('propertySelect').addEventListener('change', function() 
         });
     });
 
+        //Rents
     fetch(`/agency/property/${propertyId}/rents`)
     .then(response => response.json())
     .then(data => {
@@ -82,6 +87,7 @@ document.getElementById('propertySelect').addEventListener('change', function() 
         });
     });
 
+        //Meetings
     fetch(`/agency/property/${propertyId}/meetings`)
     .then(response => response.json())
     .then(data => {
@@ -230,4 +236,25 @@ document.getElementById('addPropertyForm').addEventListener('submit', function(e
         }
         console.log(data);
     });
+});
+
+document.getElementById('updatePropertyStatusButton').addEventListener('click', function(event) {
+    event.preventDefault();
+    var answer = confirm('czy chcesz aktualizować status nieruchomości?');
+    if (answer) {
+        fetch(`/agency/procedure/update_property_status`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+        .then(data => {
+            if(data.message == 'Property statuses updated successfully') {
+                alert('Property status updated successfully');
+            } else {
+                alert('Failed to update property status'+ data.detail);
+            }
+            console.log(data);
+        });      
+    }
 });

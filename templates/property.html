@@ -3,6 +3,15 @@
 {% block title %}Nieruchomości{% endblock %}
 
 {% block content %}
+
+<h1 class="titlename">Nieruchomości</h1>
+
+
+<div id="updatePropertyStatus" class="classblock">
+    <h3>Zaktualizuj statusy nieruchomości</h3>
+    <button id="updatePropertyStatusButton" class="submitbutton">Zaktualizuj statusy</button>
+</div>
+
 <div id="propertyFormAdd" class="classblock">
     <h3>Dodaj nową nieruchomość</h3>
     <form id="addPropertyForm" class="classform">
@@ -10,6 +19,7 @@
         <input type="text" id="add_address" name="address"><br>
         <label for="city">Miasto:</label>
         <input type="text" id="add_city" name="city"><br>
+        
         <label for="state">Stan:</label>
         <input type="text" id="add_state" name="state"><br>
         <label for="postal_code">Kod pocztowy:</label>
@@ -45,7 +55,6 @@
 </div>
 
 
-
 <div id="propertyList" class="classblock">
     <h2>Edytuj wybraną nieruchomość</h2>
     <p>Lista dostępnych nieruchomości:</p>
@@ -64,6 +73,8 @@
         <input type="text" id="address" name="address"><br>
         <label for="city">Miasto:</label>
         <input type="text" id="city" name="city"><br>
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status" readonly><br>
         <label for="state">Stan:</label>
         <input type="text" id="state" name="state"><br>
         <label for="postal_code">Kod pocztowy:</label>
@@ -94,7 +105,7 @@
         </select><br>
         <label for="description">Opis:</label>
         <textarea id="description" name="description"></textarea><br>
-        <button type="submit">Zapisz zmiany</button>
+        <button type="submit" class="submitbutton">Zapisz zmiany</button>
     </form>
     <button id="deleteProperty" class="deletebutton">Usuń nieruchomość</button>
 </div>
@@ -122,6 +133,7 @@
         </ul>  
     </div>
 </div>
+
 
 <script src="/static/property.js"></script>
 {% endblock %}

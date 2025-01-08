@@ -113,3 +113,9 @@ def insert_new_manager(name: str, surname: str, email: str, password: str, addre
     insert_by_procedure = InsertByProcedure()  # Instantiate the class
     insert_by_procedure.insert_new_manager(name, surname, email, password, address, supervision_area, employment_date)
     return {"message": "New manager inserted successfully"}
+
+@router.post("/agency/procedure/update_property_status")
+def update_property_status():
+    insert_by_procedure = InsertByProcedure()
+    insert_by_procedure.update_property_status()
+    return {"message": "Property statuses updated successfully"}

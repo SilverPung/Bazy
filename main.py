@@ -11,7 +11,8 @@ cur = con.cursor()
 
 try:
     cur.execute("""
-        ALTER TABLE "Rents" ADD PRICE INTEGER DEFAULT 5000 NOT NULL
+              
+       EXECUTE PROCEDURE UpdatePropertyStatus;
             
     """)
 

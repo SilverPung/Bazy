@@ -194,6 +194,16 @@ class InsertByProcedure(DatabaseConnection):
         except fdb.Error as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    def update_property_status(self):
+        try:
+            cursor = self.get_cursor()
+            cursor.execute('''
+                 EXECUTE PROCEDURE UpdatePropertyStatus;
+            ''')
+            self.commit()
+        except fdb.Error as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
 if __name__ == '__main__':
     insert = InsertOne()
     insert.insert_property("Marii Skłodowskiej Curie 82/1", 'Bydgoszcz', 'Kujawsko-Pomorskie', '85-733', 130, 3, 2, 600000, 'AVAILABLE', 'Flat', 'A beautiful flat in the city center.')
